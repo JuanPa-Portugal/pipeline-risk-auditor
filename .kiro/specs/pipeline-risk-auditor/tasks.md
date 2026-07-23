@@ -74,7 +74,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Ejecutar con `npx vitest --run`
     - _Requisitos: 1.1, 1.3, 1.4, 2.1, 2.2, 2.3, 2.4, 5.1, 5.2, 5.4_
 
-  - [ ] 3.6 Escribir property test obligatorio de la fórmula de puntaje de riesgo
+  - [x] 3.6 Escribir property test obligatorio de la fórmula de puntaje de riesgo
     - **Propiedad 1: Correctitud de la fórmula de puntaje de riesgo**
     - **Valida: Requisitos 5.1, 5.2, 5.4**
     - Usar fast-check con mínimo 100 iteraciones
