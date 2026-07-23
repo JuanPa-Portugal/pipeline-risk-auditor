@@ -60,7 +60,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Retornar `insufficientEvidence: true` cuando no hay candidatas claras
     - _Requisitos: 3.1, 3.2, 3.3, 3.5_
 
-  - [ ] 3.4 Implementar Calculador_Riesgo (`src/modules/calculador-riesgo.ts`)
+  - [x] 3.4 Implementar Calculador_Riesgo (`src/modules/calculador-riesgo.ts`)
     - Implementar fórmula: `min(100, (alto × 20) + (medio × 10) + (bajo × 5))`
     - Generar desglose (RiskBreakdown) por cada hallazgo
     - Retornar puntaje 0 cuando no hay hallazgos
