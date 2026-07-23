@@ -36,7 +36,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - Commit sugerido: `feat: estructura base del proyecto con tipos e interfaces`
 
 - [ ] 3. FASE 2 — Motor determinístico
-  - [ ] 3.1 Implementar Analizador_CSV (`src/modules/analizador-csv.ts`)
+  - [x] 3.1 Implementar Analizador_CSV (`src/modules/analizador-csv.ts`)
     - Implementar `validateFile(file: File)`: validar extensión .csv, tamaño ≤10MB, verificar que no esté vacío
     - Implementar `parse(file: File)`: leer como texto UTF-8, parsear con PapaParse, generar CSVSummary con perfilado de columnas (tipo inferido, nullCount, emptyCount, uniqueCount, sampleValues)
     - Manejar errores de parseo: reportar filas con error sin bloquear el análisis
