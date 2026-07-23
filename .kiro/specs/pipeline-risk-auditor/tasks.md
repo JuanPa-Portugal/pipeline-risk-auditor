@@ -30,7 +30,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Crear `.env.example` con placeholder `VITE_API_URL=http://localhost:3001`
     - _Requisitos: 1.4, 5.1_
 
-- [ ] 2. Checkpoint Fase 1
+- [x] 2. Checkpoint Fase 1
   - Verificar que el proyecto compila sin errores (`npm run build`).
   - Verificar que `npm run dev` inicia la aplicación vacía.
   - Commit sugerido: `feat: estructura base del proyecto con tipos e interfaces`
