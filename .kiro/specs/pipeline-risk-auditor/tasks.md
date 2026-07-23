@@ -67,7 +67,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Cap a 100 sin importar cantidad de hallazgos
     - _Requisitos: 5.1, 5.2, 5.3, 5.4_
 
-  - [ ] 3.5 Escribir tests unitarios obligatorios del motor determinístico
+  - [x] 3.5 Escribir tests unitarios obligatorios del motor determinístico
     - Tests de Analizador_CSV: parseo correcto de CSV válido, rechazo de archivo no-CSV, rechazo de archivo >10MB, generación correcta de CSVSummary
     - Tests de Motor_Deteccion: detección de nulos, detección de vacíos, detección de duplicados exactos, detección de fechas inválidas, clasificación de severidad
     - Tests de Calculador_Riesgo: fórmula correcta con hallazgos mixtos, cap a 100, caso con 0 hallazgos retorna 0
