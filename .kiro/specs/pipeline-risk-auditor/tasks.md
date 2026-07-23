@@ -25,7 +25,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Crear `src/types/index.ts`: re-exportar todos los tipos
     - _Requisitos: 1.1, 2.1, 2.5, 3.1, 5.1, 6.1_
 
-  - [ ] 1.3 Crear archivo de constantes y configuración de entorno
+  - [x] 1.3 Crear archivo de constantes y configuración de entorno
     - Crear `src/constants.ts`: MAX_FILE_SIZE (10 MB), MAX_SAMPLE_ROWS (10), SEVERITY_WEIGHTS ({alto: 20, medio: 10, bajo: 5}), ALLOWED_EXTENSIONS, MAX_COLUMN_NAME_LENGTH (128), MAX_PAYLOAD_SIZE (64 KB)
     - Crear `.env.example` con placeholder `VITE_API_URL=http://localhost:3001`
     - _Requisitos: 1.4, 5.1_
