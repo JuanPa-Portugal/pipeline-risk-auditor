@@ -1,6 +1,6 @@
 # Documento de Diseño — Pipeline Risk Auditor
 
-## 1. Visión General
+## Overview
 
 Pipeline Risk Auditor es una herramienta web que analiza archivos CSV para detectar riesgos de calidad de datos antes de su ingesta en pipelines. El análisis determinístico se ejecuta íntegramente en el navegador (client-side), mientras que un **Agente_Auditor** desplegado en AWS enriquece los hallazgos con explicaciones contextuales, priorización de riesgos y recomendaciones correctivas generadas mediante Amazon Bedrock.
 
@@ -35,7 +35,7 @@ El sistema genera un puntaje de riesgo (0–100), identifica columnas candidatas
 
 ---
 
-## 3. Arquitectura
+## Architecture
 
 ### Diagrama de Arquitectura AWS
 
@@ -98,7 +98,7 @@ sequenceDiagram
 
 ---
 
-## 4. Componentes e Interfaces
+## Components and Interfaces
 
 ### 4.1 Analizador_CSV
 
@@ -385,7 +385,7 @@ interface AgenteAuditor {
 
 ---
 
-## 6. Modelos de Datos
+## Data Models
 
 ### AppState (React Context) — Optimizado para Memoria
 
@@ -472,7 +472,7 @@ interface AppState {
 
 ---
 
-## 8. Manejo de Errores
+## Error Handling
 
 | Escenario | Componente | Comportamiento |
 |-----------|------------|----------------|
@@ -490,33 +490,33 @@ interface AppState {
 
 ---
 
-## 9. Propiedades de Correctitud
+## Correctness Properties
 
 *Una propiedad es una característica o comportamiento que debe mantenerse verdadero en todas las ejecuciones válidas de un sistema — esencialmente, una declaración formal sobre lo que el sistema debe hacer. Las propiedades sirven como puente entre especificaciones legibles por humanos y garantías de correctitud verificables por máquina.*
 
 Para el MVP, se definen **3 propiedades** verificables con property-based testing (fast-check):
 
-### Propiedad 1: Correctitud de la fórmula de puntaje de riesgo
+### Property 1: Correctitud de la fórmula de puntaje de riesgo
 
 *Para cualquier* combinación de hallazgos con severidades alto, medio y bajo, el puntaje de riesgo calculado por Calculador_Riesgo DEBE ser igual a `min(100, (cantidad_alto × 20) + (cantidad_medio × 10) + (cantidad_bajo × 5))`. Además, el puntaje siempre debe estar en el rango [0, 100].
 
-**Valida: Requisitos 5.1, 5.2, 5.4**
+**Validates: Requirements 5.1, 5.2, 5.4**
 
-### Propiedad 2: Correctitud del conteo de nulos y vacíos
+### Property 2: Correctitud del conteo de nulos y vacíos
 
 *Para cualquier* conjunto de datos tabulares (filas y columnas), el conteo de valores nulos reportado por Motor_Deteccion para cada columna DEBE ser exactamente igual al número real de celdas con valor null/undefined en esa columna, y el conteo de vacíos DEBE ser exactamente igual al número real de celdas con cadena vacía o solo espacios en blanco.
 
-**Valida: Requisitos 2.1, 2.2**
+**Validates: Requirements 2.1, 2.2**
 
-### Propiedad 3: Correctitud del conteo de duplicados
+### Property 3: Correctitud del conteo de duplicados
 
 *Para cualquier* conjunto de filas, el número de filas duplicadas reportado por Motor_Deteccion DEBE ser exactamente igual al número real de filas que son copia exacta de otra fila en el dataset (total de filas menos filas únicas).
 
-**Valida: Requisito 2.3**
+**Validates: Requirements 2.3**
 
 ---
 
-## 10. Estrategia de Testing
+## Testing Strategy
 
 ### Enfoque Dual para MVP
 
