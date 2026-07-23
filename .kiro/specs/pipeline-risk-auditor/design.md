@@ -257,6 +257,7 @@ interface EnrichRequest {
     columns: { name: string; inferredType: string }[];
   };
   findings: {
+    id: string;
     category: string;
     severity: Severity;
     description: string;
@@ -329,6 +330,7 @@ interface AgenteAuditor {
   },
   "findings": [
     {
+      "id": "nulls-email",
       "category": "nulls",
       "severity": "alto",
       "description": "Columna 'email' tiene 23% de valores nulos",

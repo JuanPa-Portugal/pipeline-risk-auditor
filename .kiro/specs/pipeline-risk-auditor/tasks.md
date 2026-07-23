@@ -15,7 +15,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Crear estructura de directorios: `src/modules/`, `src/components/`, `src/types/`, `src/context/`, `src/utils/`
     - _Requisitos: 1.1, 1.2, 1.3, 1.4_
 
-  - [ ] 1.2 Definir tipos e interfaces en `src/types/`
+  - [x] 1.2 Definir tipos e interfaces en `src/types/`
     - Crear `src/types/csv.ts`: ColumnProfile, CSVSummary
     - Crear `src/types/findings.ts`: Severity, Finding, DetectionResult
     - Crear `src/types/candidates.ts`: CandidateType, ColumnCandidate, HeuristicResult
