@@ -52,7 +52,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Generar explicación basada en reglas y acción recomendada para cada hallazgo
     - _Requisitos: 2.1, 2.2, 2.3, 2.4, 2.5, 4.1, 4.2, 4.3_
 
-  - [ ] 3.3 Implementar Motor_Heuristico (`src/modules/motor-heuristico.ts`)
+  - [x] 3.3 Implementar Motor_Heuristico (`src/modules/motor-heuristico.ts`)
     - Implementar heurísticas de nombres de columnas (patrones como "id", "key", "code", "updated_at", "modified_date")
     - Implementar evaluación por tipo de dato, unicidad y nulidad
     - Clasificar candidatas como primary_key, business_key o incremental_marker
