@@ -30,3 +30,6 @@ yarn-error.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Metadatos locales de ejecución de Kiro
+.kiro/specs/**/tasks.meta.json

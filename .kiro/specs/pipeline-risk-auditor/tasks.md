@@ -7,7 +7,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
 ## Tasks
 
 - [ ] 1. FASE 1 — Base local
-  - [ ] 1.1 Crear estructura del proyecto React + TypeScript + Vite + Tailwind CSS
+  - [x] 1.1 Crear estructura del proyecto React + TypeScript + Vite + Tailwind CSS
     - Inicializar proyecto con Vite (template react-ts)
     - Configurar Tailwind CSS con PostCSS
     - Instalar dependencias: papaparse, vitest, fast-check, msw, @types/papaparse
