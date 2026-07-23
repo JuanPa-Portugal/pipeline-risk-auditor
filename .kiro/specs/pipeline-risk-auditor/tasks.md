@@ -42,7 +42,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Manejar errores de parseo: reportar filas con error sin bloquear el análisis
     - _Requisitos: 1.1, 1.2, 1.3, 1.4_
 
-  - [ ] 3.2 Implementar Motor_Deteccion (`src/modules/motor-deteccion.ts`)
+  - [x] 3.2 Implementar Motor_Deteccion (`src/modules/motor-deteccion.ts`)
     - Implementar detección de nulos por columna (conteo y porcentaje)
     - Implementar detección de vacíos por columna (cadenas vacías o solo espacios)
     - Implementar detección de filas duplicadas exactas
