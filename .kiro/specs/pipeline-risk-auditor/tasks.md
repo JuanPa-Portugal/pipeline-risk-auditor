@@ -114,7 +114,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - El orquestador libera las filas completas del CSV después del análisis, conservando solo sampleRows
     - _Requisitos: 1.1, 1.2, 7.4_
 
-  - [ ] 5.4 Implementar componentes de reporte y puntaje
+  - [x] 5.4 Implementar componentes de reporte y puntaje
     - Crear `src/components/ReportView.tsx`: lista de hallazgos con severidad, descripción, explicación por reglas, acción recomendada
     - Crear `src/components/RiskScoreDisplay.tsx`: puntaje numérico + barra visual + desglose por hallazgo
     - Crear `src/components/CandidateConfirmation.tsx`: lista de candidatas con botones confirmar/rechazar
