@@ -108,7 +108,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Feedback visual durante la carga (estado loading)
     - _Requisitos: 1.3, 1.4_
 
-  - [ ] 5.3 Implementar preview de estructura y orquestador local
+  - [x] 5.3 Implementar preview de estructura y orquestador local
     - Crear `src/components/StructurePreview.tsx`: mostrar resumen (filas, columnas, tipos) + hasta 10 filas de muestra
     - Crear `src/modules/orchestrator.ts`: coordinar flujo parse → detect → heuristic → risk → report
     - El orquestador libera las filas completas del CSV después del análisis, conservando solo sampleRows
