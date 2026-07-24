@@ -126,7 +126,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - El sistema funciona completamente en modo `rules_only` sin necesidad de AWS
     - _Requisitos: 7.1, 7.2, 7.3, 7.4, 7.5_
 
-  - [ ] 5.6 Escribir test de integración obligatorio del flujo local
+  - [x] 5.6 Escribir test de integración obligatorio del flujo local
     - Test end-to-end sin AWS: cargar CSV de prueba → parseo → detección → heurísticas → puntaje → generación de reporte
     - Verificar que el reporte contiene hallazgos detectados, puntaje correcto y candidatas identificadas
     - Verificar que el modo es `rules_only` (sin enriquecimiento IA)
