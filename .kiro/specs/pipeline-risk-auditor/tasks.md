@@ -120,7 +120,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Crear `src/components/CandidateConfirmation.tsx`: lista de candidatas con botones confirmar/rechazar
     - _Requisitos: 3.4, 5.3, 7.1, 7.2, 7.5_
 
-  - [ ] 5.5 Implementar Generador_Reporte y exportación Markdown
+  - [x] 5.5 Implementar Generador_Reporte y exportación Markdown
     - Crear `src/modules/generador-reporte.ts`: generar contenido Markdown con estructura, hallazgos, puntaje, candidatas confirmadas
     - Crear botón de exportación en la UI que descarga el archivo .md
     - El sistema funciona completamente en modo `rules_only` sin necesidad de AWS
