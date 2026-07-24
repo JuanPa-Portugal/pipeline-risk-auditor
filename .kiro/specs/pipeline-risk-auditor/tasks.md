@@ -133,7 +133,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Ejecutar con `npx vitest --run`
     - _Requisitos: 1.1, 2.1, 2.3, 5.1, 7.1_
 
-- [ ] 6. Checkpoint Fase 3
+- [x] 6. Checkpoint Fase 3
   - Demo local funcional: cargar CSV, ver hallazgos, confirmar candidatas, exportar Markdown.
   - Todo funciona sin AWS en modo reglas.
   - Commit sugerido: `feat: MVP web local funcional con modo reglas`
