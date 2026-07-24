@@ -2,7 +2,12 @@ import Papa from 'papaparse';
 import type { ColumnProfile, CSVSummary } from '../types/csv';
 import { MAX_FILE_SIZE, MAX_SAMPLE_ROWS, ALLOWED_EXTENSIONS } from '../constants';
 
-type ParsedRow = Record<string, string | undefined>;
+export type ParsedRow = Record<string, string | undefined>;
+
+export interface CSVParseResult {
+  summary: CSVSummary;
+  rows: ParsedRow[];
+}
 
 /**
  * Infers the data type of a non-empty value string.
@@ -88,6 +93,18 @@ function profileColumn(name: string, rows: ParsedRow[]): ColumnProfile {
 }
 
 /**
+ * Strips non-header properties (like __parsed_extra) from a row,
+ * keeping only the declared header columns.
+ */
+function stripToHeaders(row: ParsedRow, headers: string[]): ParsedRow {
+  const clean: ParsedRow = {};
+  for (const name of headers) {
+    clean[name] = row[name];
+  }
+  return clean;
+}
+
+/**
  * Analizador_CSV — Módulo responsable de cargar, validar y parsear archivos CSV.
  */
 export class AnalizadorCSV {
@@ -121,10 +138,12 @@ export class AnalizadorCSV {
   }
 
   /**
-   * Parses a CSV file and returns a CSVSummary.
+   * Parses a CSV file and returns both CSVSummary and the filtered rows.
+   * This is the central parsing method — all logic lives here.
    * Reads the file as ArrayBuffer and decodes as UTF-8 (fatal mode).
+   * Each row contains ONLY the declared header columns (no __parsed_extra).
    */
-  async parse(file: File): Promise<CSVSummary> {
+  async parseWithRows(file: File): Promise<CSVParseResult> {
     const validation = this.validateFile(file);
     if (!validation.valid) {
       throw new Error(validation.error);
@@ -142,7 +161,7 @@ export class AnalizadorCSV {
       );
     }
 
-    // Parse the decoded text with PapaParse
+    // Parse the decoded text with PapaParse (single call)
     const parseResult = Papa.parse<ParsedRow>(text, {
       header: true,
       skipEmptyLines: false,
@@ -161,16 +180,19 @@ export class AnalizadorCSV {
 
     // Filter rows: keep only rows that have at least one non-empty value
     // in declared header columns. Do NOT use Object.values or process __parsed_extra.
-    const rows: ParsedRow[] = parseResult.data.filter((row) =>
+    const filteredRows: ParsedRow[] = parseResult.data.filter((row) =>
       headers.some((name) => {
         const value = row[name];
         return typeof value === 'string' && value.trim() !== '';
       })
     );
 
-    if (rows.length === 0) {
+    if (filteredRows.length === 0) {
       throw new Error('El archivo CSV no contiene datos (solo encabezados o filas vacías).');
     }
+
+    // Strip rows to only declared headers (remove __parsed_extra and any extra properties)
+    const rows: ParsedRow[] = filteredRows.map((row) => stripToHeaders(row, headers));
 
     // Profile each column
     const columns: ColumnProfile[] = headers.map((name) => profileColumn(name, rows));
@@ -182,6 +204,15 @@ export class AnalizadorCSV {
       parseErrors,
     };
 
-    return summary;
+    return { summary, rows };
+  }
+
+  /**
+   * Parses a CSV file and returns only the CSVSummary.
+   * Delegates to parseWithRows internally — no duplicated logic.
+   */
+  async parse(file: File): Promise<CSVSummary> {
+    const result = await this.parseWithRows(file);
+    return result.summary;
   }
 }
