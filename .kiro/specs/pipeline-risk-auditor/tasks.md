@@ -89,7 +89,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - **Valida: Requisito 2.3**
     - Usar fast-check con mínimo 100 iteraciones por propiedad
 
-- [ ] 4. Checkpoint Fase 2
+- [x] 4. Checkpoint Fase 2
   - Todos los tests pasan (`npx vitest --run`).
   - Módulos exportan correctamente y pueden importarse sin error.
   - Commit sugerido: `feat: motor determinístico completo con tests`
