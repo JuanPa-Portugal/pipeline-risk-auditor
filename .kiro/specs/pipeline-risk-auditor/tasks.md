@@ -101,7 +101,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - NOTA MEMORIA: Las filas completas del CSV pueden existir temporalmente durante el análisis, pero NO se guardan en el contexto. Solo se conservan: CSVSummary, sampleRows (máx 10), Finding[], ColumnCandidate[], RiskScore
     - _Requisitos: 1.1, 2.1, 5.1, 7.1_
 
-  - [ ] 5.2 Implementar componente FileUploader
+  - [x] 5.2 Implementar componente FileUploader
     - Crear `src/components/FileUploader.tsx` con drag-and-drop
     - Validación client-side: extensión .csv, tamaño ≤10MB
     - Mostrar mensaje de error descriptivo si el archivo es inválido
