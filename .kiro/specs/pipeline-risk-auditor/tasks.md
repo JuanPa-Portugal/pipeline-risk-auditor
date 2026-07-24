@@ -82,7 +82,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Verificar que resultado == min(100, alto×20 + medio×10 + bajo×5)
     - Verificar que resultado está en rango [0, 100]
 
-  - [ ]* 3.7 Escribir property tests opcionales de conteo de nulos/vacíos y duplicados
+  - [x]* 3.7 Escribir property tests opcionales de conteo de nulos/vacíos y duplicados
     - **Propiedad 2: Correctitud del conteo de nulos y vacíos**
     - **Valida: Requisitos 2.1, 2.2**
     - **Propiedad 3: Correctitud del conteo de duplicados**
