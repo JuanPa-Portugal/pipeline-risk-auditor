@@ -95,7 +95,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - Commit sugerido: `feat: motor determinístico completo con tests`
 
 - [ ] 5. FASE 3 — MVP web local
-  - [ ] 5.1 Crear AppContext con React Context + useReducer
+  - [x] 5.1 Crear AppContext con React Context + useReducer
     - Implementar `src/context/AppContext.tsx` con AppState del diseño
     - Implementar reducer con acciones: SET_FILE, SET_SUMMARY, SET_SAMPLE_ROWS, SET_FINDINGS, SET_CANDIDATES, SET_RISK_SCORE, SET_ENRICHMENT, SET_AI_STATUS, SET_PHASE, SET_ERROR, RESET
     - NOTA MEMORIA: Las filas completas del CSV pueden existir temporalmente durante el análisis, pero NO se guardan en el contexto. Solo se conservan: CSVSummary, sampleRows (máx 10), Finding[], ColumnCandidate[], RiskScore
