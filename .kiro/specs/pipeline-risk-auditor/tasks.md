@@ -138,7 +138,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - Todo funciona sin AWS en modo reglas.
   - Commit sugerido: `feat: MVP web local funcional con modo reglas`
 
-- [ ] 7. FASE 4 — Preparación AWS
+- [x] 7. FASE 4 — Preparación AWS
   - [x] 7.1 Verificar entorno AWS y acceso a Bedrock
     - Verificar cuenta AWS activa y región disponible
     - Verificar acceso a Amazon Bedrock en la consola (Model Access habilitado)
