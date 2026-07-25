@@ -170,7 +170,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Implementar CORS restringido con variable ALLOWED_ORIGIN
     - _Requisitos: 6.1, 6.3_
 
-  - [ ] 9.3 Integrar frontend con el Agente_Auditor
+  - [x] 9.3 Integrar frontend con el Agente_Auditor
     - Crear `src/modules/enrichment-client.ts`: llamada HTTP POST a VITE_API_URL + `/audit/enrich`
     - Implementar modo degradado: si la llamada falla o timeout, continuar con explicaciones de reglas
     - Indicar visualmente en la UI si explicación es IA o reglas (badge/icono diferenciado)
