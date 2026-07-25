@@ -41,7 +41,7 @@ function generateCorrectiveAction(finding: EnrichRequest['findings'][number]): s
  * based on the actual EnrichRequest payload.
  */
 export const handlers = [
-  http.post('*/audit/enrich', async ({ request }) => {
+  http.post('/audit/enrich', async ({ request }) => {
     const body = await request.json() as EnrichRequest;
 
     // Basic validation: findings must be an array
