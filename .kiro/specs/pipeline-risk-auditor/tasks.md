@@ -192,9 +192,12 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - _Requisitos: 6.1, 6.2_
 
 - [ ] 10. Checkpoint Fase 5
-  - Frontend se conecta al mock local, luego al Lambda real.
-  - Modo degradado funciona correctamente si Bedrock falla.
-  - Commit sugerido: `feat: Agente_Auditor con Lambda y Bedrock integrado`
+  - Frontend se conecta correctamente al mock local del Agente_Auditor.
+  - El handler Lambda está implementado, compila y tiene tests unitarios exitosos.
+  - El flujo de integración local CSV → análisis → enriquecimiento mock funciona correctamente.
+  - El modo degradado funciona si el servicio de IA no está disponible.
+  - No se envían filas completas del CSV al backend.
+  - Commit sugerido: `feat: Agente_Auditor preparado para despliegue AWS`
 
 - [ ] 11. FASE 6 — Despliegue
   - [ ] 11.1 Crear template SAM y desplegar backend
