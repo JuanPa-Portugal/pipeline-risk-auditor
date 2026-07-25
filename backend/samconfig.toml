@@ -1,0 +1,14 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "pipeline-risk-auditor"
+resolve_s3 = true
+s3_prefix = "pipeline-risk-auditor"
+region = "us-west-2"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "BedrockModelId=\"openai.gpt-oss-20b-1:0\" AllowedOrigin=\"http://localhost:5173\""
+image_repositories = []
+
+[default.global.parameters]
+region = "us-west-2"

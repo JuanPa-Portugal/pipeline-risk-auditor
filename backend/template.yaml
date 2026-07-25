@@ -59,12 +59,10 @@ Resources:
       BuildProperties:
         Minify: true
         Target: es2022
-        Format: esm
+        Format: cjs
         Sourcemap: false
         EntryPoints:
           - src/handler.ts
-        OutExtension:
-          - .js=.mjs
 
 # --- Outputs ---
 
