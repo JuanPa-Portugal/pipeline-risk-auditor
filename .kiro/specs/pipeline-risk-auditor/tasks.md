@@ -191,7 +191,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Verificar modo degradado cuando el mock falla
     - _Requisitos: 6.1, 6.2_
 
-- [ ] 10. Checkpoint Fase 5
+- [x] 10. Checkpoint Fase 5
   - Frontend se conecta correctamente al mock local del Agente_Auditor.
   - El handler Lambda está implementado, compila y tiene tests unitarios exitosos.
   - El flujo de integración local CSV → análisis → enriquecimiento mock funciona correctamente.
