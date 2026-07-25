@@ -159,7 +159,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Permite probar la integración frontend-backend sin depender de AWS
     - _Requisitos: 6.1, 6.2_
 
-  - [ ] 9.2 Crear handler Lambda del Agente_Auditor (`backend/src/handler.ts`)
+  - [x] 9.2 Crear handler Lambda del Agente_Auditor (`backend/src/handler.ts`)
     - Crear directorio `backend/` con package.json, tsconfig.json
     - Implementar validación del payload: estructura, tipos, tamaño máximo 64 KB
     - Implementar sanitización de nombres de columnas: máx 128 chars, solo alfanuméricos + guiones
