@@ -177,7 +177,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Mostrar banner de modo degradado cuando el servicio de IA no está disponible
     - _Requisitos: 6.1, 6.2, 6.3, 6.4_
 
-  - [ ] 9.4 Escribir tests unitarios obligatorios del handler Lambda
+  - [x] 9.4 Escribir tests unitarios obligatorios del handler Lambda
     - Test de validación de payload (rechazar estructura inválida, payload >64KB)
     - Test de sanitización de nombres de columnas
     - Test de manejo de timeout (simular timeout de Bedrock)
