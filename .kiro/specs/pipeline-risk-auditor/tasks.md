@@ -201,11 +201,16 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
 
 - [ ] 11. FASE 6 — Despliegue
   - [ ] 11.1 Crear template SAM y desplegar backend
-    - Crear `backend/template.yaml`: Lambda + API Gateway, runtime nodejs20.x, timeout 30s, memoria 256 MB
-    - Variables de entorno: BEDROCK_MODEL_ID (configurable), BEDROCK_REGION, ALLOWED_ORIGIN
-    - Política IAM: bedrock:InvokeModel (restringir al ARN del modelo confirmado) + logs:*
+    - Crear `backend/template.yaml`: Lambda + API Gateway
+    - Runtime: nodejs22.x
+    - Usar Metadata BuildMethod: esbuild para transpilar y empaquetar backend/src/handler.ts
+    - Timeout: 30 segundos
+    - Memoria: 256 MB
+    - Región de despliegue: us-west-2 (modelo validado en esta región)
+    - Variables de entorno: BEDROCK_MODEL_ID (configurable), ALLOWED_ORIGIN (configurable)
+    - Política IAM: bedrock:InvokeModel restringida al ARN del modelo confirmado + logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents
     - Desplegar: `sam build && sam deploy --guided`
-    - Verificar endpoint funcional con curl o Postman
+    - Verificar endpoint funcional con curl o Postman después del despliegue
     - _Requisitos: 6.1_
 
   - [ ] 11.2 Configurar Amplify hosting y conectar frontend
