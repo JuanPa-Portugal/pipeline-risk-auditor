@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Pipeline Risk Auditor - Agente_Auditor Lambda
+  Endpoint POST /audit/enrich para enriquecer hallazgos de calidad de datos
+  mediante Amazon Bedrock Converse API.
+
+# --- Parameters ---
+
+Parameters:
+  BedrockModelId:
+    Type: String
+    Default: 'openai.gpt-oss-20b-1:0'
+    Description: ID del modelo de Amazon Bedrock a utilizar para el enriquecimiento.
+
+  AllowedOrigin:
+    Type: String
+    Default: 'http://localhost:5173'
+    Description: Origen permitido para CORS (dominio del frontend).
+
+# --- Resources ---
+
+Resources:
+  AuditEnrichFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: pipeline-risk-auditor-enrich
+      CodeUri: .
+      Handler: handler.handler
+      Runtime: nodejs22.x
+      Architectures:
+        - x86_64
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+          ALLOWED_ORIGIN: !Ref AllowedOrigin
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - bedrock:InvokeModel
+              Resource:
+                - !Sub 'arn:aws:bedrock:${AWS::Region}::foundation-model/${BedrockModelId}'
+      Events:
+        AuditEnrichPost:
+          Type: Api
+          Properties:
+            Path: /audit/enrich
+            Method: post
+        AuditEnrichOptions:
+          Type: Api
+          Properties:
+            Path: /audit/enrich
+            Method: options
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2022
+        Format: esm
+        Sourcemap: false
+        EntryPoints:
+          - src/handler.ts
+        OutExtension:
+          - .js=.mjs
+
+# --- Outputs ---
+
+Outputs:
+  ApiBaseUrl:
+    Description: URL base de API Gateway (usar como VITE_API_URL)
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+
+  AuditEnrichEndpoint:
+    Description: URL completa del endpoint POST /audit/enrich
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/audit/enrich'
+
+  FunctionArn:
+    Description: ARN de la función Lambda del Agente_Auditor
+    Value: !GetAtt AuditEnrichFunction.Arn
