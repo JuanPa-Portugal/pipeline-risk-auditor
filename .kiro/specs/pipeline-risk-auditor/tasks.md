@@ -148,7 +148,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Documentar en `docs/aws-setup.md` el modelo elegido, la región y los permisos verificados
     - _Requisitos: 6.1, 6.2_
 
-- [ ] 8. Checkpoint Fase 4
+- [x] 8. Checkpoint Fase 4
   - AWS CLI y SAM funcionan, Bedrock está habilitado con un modelo accesible.
   - Commit sugerido: `docs: validación de entorno AWS y modelo Bedrock`
 
