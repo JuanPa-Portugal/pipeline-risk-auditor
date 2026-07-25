@@ -152,7 +152,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - AWS CLI y SAM funcionan, Bedrock está habilitado con un modelo accesible.
   - Commit sugerido: `docs: validación de entorno AWS y modelo Bedrock`
 
-- [ ] 9. FASE 5 — Agente_Auditor
+- [x] 9. FASE 5 — Agente_Auditor
   - [x] 9.1 Implementar mock local del endpoint POST /audit/enrich
     - Crear mock con msw para desarrollo local (interceptar POST /audit/enrich)
     - El mock retorna respuestas realistas de tipo EnrichResponse
