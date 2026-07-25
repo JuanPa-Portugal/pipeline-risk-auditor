@@ -185,7 +185,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Ejecutar con `npx vitest --run` en directorio backend
     - _Requisitos: 6.1_
 
-  - [ ]* 9.5 Escribir test de integración opcional con mock del Agente_Auditor
+  - [x]* 9.5 Escribir test de integración opcional con mock del Agente_Auditor
     - Test end-to-end con msw interceptando el endpoint
     - Verificar flujo completo: CSV → análisis → enriquecimiento mock → reporte con explicaciones IA
     - Verificar modo degradado cuando el mock falla
