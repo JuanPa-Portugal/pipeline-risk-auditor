@@ -3,15 +3,15 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   Pipeline Risk Auditor - Agente_Auditor Lambda
   Endpoint POST /audit/enrich para enriquecer hallazgos de calidad de datos
-  mediante Amazon Bedrock Converse API.
+  mediante Amazon Bedrock Mantle Responses API.
 
 # --- Parameters ---
 
 Parameters:
   BedrockModelId:
     Type: String
-    Default: 'openai.gpt-oss-20b-1:0'
-    Description: ID del modelo de Amazon Bedrock a utilizar para el enriquecimiento.
+    Default: 'openai.gpt-oss-20b'
+    Description: ID del modelo de Amazon Bedrock Mantle a utilizar para el enriquecimiento.
 
   AllowedOrigin:
     Type: String
@@ -38,11 +38,14 @@ Resources:
           ALLOWED_ORIGIN: !Ref AllowedOrigin
       Policies:
         - Statement:
-            - Effect: Allow
+            - Sid: MantleInferencePermissions
+              Effect: Allow
               Action:
-                - bedrock:InvokeModel
-              Resource:
-                - !Sub 'arn:aws:bedrock:${AWS::Region}::foundation-model/${BedrockModelId}'
+                - bedrock-mantle:CreateInference
+                - bedrock-mantle:GetProject
+                - bedrock-mantle:ListProjects
+                - bedrock-mantle:ListTagsForResource
+              Resource: "*"
       Events:
         AuditEnrichPost:
           Type: Api

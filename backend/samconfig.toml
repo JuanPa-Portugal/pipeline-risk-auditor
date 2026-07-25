@@ -7,7 +7,7 @@ s3_prefix = "pipeline-risk-auditor"
 region = "us-west-2"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
-parameter_overrides = "BedrockModelId=\"openai.gpt-oss-20b-1:0\" AllowedOrigin=\"http://localhost:5173\""
+parameter_overrides = "BedrockModelId=\"openai.gpt-oss-20b\" AllowedOrigin=\"http://localhost:5173\""
 image_repositories = []
 
 [default.global.parameters]
