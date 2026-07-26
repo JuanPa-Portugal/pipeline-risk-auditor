@@ -164,7 +164,7 @@ export class AnalizadorCSV {
     // Parse the decoded text with PapaParse (single call)
     const parseResult = Papa.parse<ParsedRow>(text, {
       header: true,
-      skipEmptyLines: false,
+      skipEmptyLines: true,
     });
 
     const headers = parseResult.meta.fields ?? [];

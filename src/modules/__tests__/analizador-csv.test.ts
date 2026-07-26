@@ -216,5 +216,17 @@ describe('AnalizadorCSV', () => {
       expect(summary.columnCount).toBe(2);
       expect(summary).not.toHaveProperty('rows');
     });
+
+    it('CSV con salto de línea final no genera error ni filas fantasma', async () => {
+      const csv = 'id,nombre\n1,Alice\n2,Bob\n3,Carol\n';
+      const file = createFile(csv, 'trailing-newline.csv');
+      const result = await analizador.parseWithRows(file);
+
+      expect(result.summary.rowCount).toBe(3);
+      expect(result.rows.length).toBe(3);
+      expect(result.summary.parseErrors.length).toBe(0);
+      expect(result.rows[0]!['id']).toBe('1');
+      expect(result.rows[2]!['nombre']).toBe('Carol');
+    });
   });
 });
