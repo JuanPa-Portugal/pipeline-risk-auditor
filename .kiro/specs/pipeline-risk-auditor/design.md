@@ -24,8 +24,8 @@ El sistema genera un puntaje de riesgo (0–100), identifica columnas candidatas
 | Framework frontend | React + TypeScript + Tailwind CSS | Stack conocido, rápido de iterar en hackathon |
 | Parseo CSV | PapaParse (client-side) | Librería madura, streaming, sin backend para parseo |
 | Análisis determinístico | Client-side en el navegador | Reduce latencia, no requiere enviar datos al servidor |
-| Componente IA | Agente_Auditor en AWS Lambda | Lógica de agente especializado con Bedrock Converse API |
-| Modelo LLM | Amazon Bedrock (Converse API) — modelo configurable | Servicio gestionado; el modelo se selecciona durante el despliegue según disponibilidad, región, permisos y costo |
+| Componente IA | Agente_Auditor en AWS Lambda | Lógica de agente especializado con Bedrock Mantle Responses API + firma SigV4 |
+| Modelo LLM | Amazon Bedrock Mantle (Responses API) — openai.gpt-oss-20b | Servicio gestionado en us-west-2; firma SigV4 con service bedrock-mantle |
 | Hosting | AWS Amplify | Despliegue continuo desde repositorio |
 | API | Amazon API Gateway + Lambda | Serverless, escalable, sin servidores que mantener |
 | Almacenamiento | Ninguno (stateless) | MVP sin persistencia; datos viven en sesión del navegador |
@@ -45,7 +45,7 @@ graph LR
         B[AWS Amplify Hosting]
         C[Amazon API Gateway]
         D[AWS Lambda<br/>TypeScript]
-        E[Amazon Bedrock<br/>Converse API]
+        E[Amazon Bedrock Mantle<br/>Responses API]
         F[Amazon CloudWatch<br/>Logs]
     end
 
@@ -77,7 +77,7 @@ sequenceDiagram
     FE->>FE: Calculador_Riesgo → puntaje
     FE->>AG: POST /audit/enrich (resumen compacto)
     AG->>LM: Proxy request
-    LM->>BR: Converse API (prompt + contexto)
+    LM->>BR: Mantle Responses API (SigV4 + prompt)
     BR-->>LM: Respuesta enriquecida
     LM-->>AG: JSON response
     AG-->>FE: Explicaciones + recomendaciones
@@ -296,11 +296,11 @@ interface AgenteAuditor {
 
 1. Recibe el payload compacto (NO el CSV completo ni todas las filas).
 2. Construye un prompt estructurado con contexto de data engineering.
-3. Invoca Amazon Bedrock vía Converse API.
+3. Invoca Amazon Bedrock Mantle vía Responses API con firma SigV4 (service: bedrock-mantle).
 4. Parsea la respuesta y la estructura en `EnrichResponse`.
 5. Si Bedrock falla o excede el timeout, retorna un error que dispara el modo degradado en el frontend.
 
-> **Nota sobre el modelo:** El `BEDROCK_MODEL_ID` es una variable configurable. El modelo definitivo se seleccionará durante el despliegue según: (1) disponibilidad en la cuenta AWS, (2) disponibilidad en la región elegida, (3) permisos de acceso al modelo (Model Access habilitado en la consola de Bedrock), y (4) costo y latencia apropiados para la hackathon.
+> **Modelo desplegado:** `BEDROCK_MODEL_ID=openai.gpt-oss-20b` en us-west-2 vía Bedrock Mantle Responses API. La invocación se firma con SigV4 (service: bedrock-mantle) utilizando las credenciales del rol de ejecución de Lambda.
 
 ---
 
@@ -312,8 +312,10 @@ interface AgenteAuditor {
 |-------|-------|
 | Método | POST |
 | Path | /audit/enrich |
-| Content-Type | application/json |
-| Timeout | 30 segundos |
+| Request Content-Type | application/json |
+| Response Content-Type | application/json; charset=utf-8 |
+| Lambda Timeout | 30 segundos |
+| Timeout interno Mantle | 25 segundos |
 
 ### Request Body
 
@@ -436,20 +438,25 @@ interface AppState {
 ### 7.1 Credenciales
 
 - **NO** se incluyen credenciales de AWS en el código frontend.
-- La Lambda usa un IAM Role con permisos mínimos (solo `bedrock:InvokeModel` y `logs:*`).
+- La Lambda usa un IAM Role con permisos acotados a Bedrock Mantle:
+  - `bedrock-mantle:CreateInference`
+  - `bedrock-mantle:GetProject`
+  - `bedrock-mantle:ListProjects`
+  - `bedrock-mantle:ListTagsForResource`
+- Las solicitudes se firman mediante AWS SigV4 con service `bedrock-mantle` y las credenciales del rol de ejecución de Lambda (no API keys).
+- Actualmente `Resource: "*"` para el MVP. El alcance por recurso podrá endurecerse posteriormente.
 - Las variables de entorno sensibles se configuran en Lambda, nunca en el frontend.
-- El recurso IAM para `bedrock:InvokeModel` debe restringirse al ARN específico del modelo seleccionado una vez que se confirme durante el despliegue. El wildcard `"*"` en el template es un placeholder inicial.
 
 ### 7.2 Validación de Payload
 
-- **API Gateway**: Validación de esquema JSON del request body. Payload máximo 64 KB.
-- **Lambda**: Validación secundaria de estructura y tipos antes de procesar.
-- Nombres de columnas: máximo 128 caracteres, solo caracteres alfanuméricos, guiones y guiones bajos.
-- Valores de muestra: truncados a 256 caracteres si exceden el límite.
+- API Gateway actúa como entrada/proxy hacia Lambda (sin Request Validator configurado actualmente).
+- **Lambda** valida estructura, tipos y tamaño máximo de payload (64 KB) antes de invocar Mantle.
+- Nombres de columnas: máximo 128 caracteres, solo caracteres alfanuméricos y guion (-).
 
 ### 7.3 CORS
 
-- CORS restringido exclusivamente al dominio del frontend desplegado en Amplify.
+- Actualmente: `ALLOWED_ORIGIN=http://localhost:5173` para desarrollo local.
+- Durante la tarea 11.2 se reemplazará por el dominio real de AWS Amplify.
 - No se permite `*` como origen en producción.
 
 ### 7.4 Prevención de Prompt Injection
@@ -461,8 +468,8 @@ interface AppState {
 
 ### 7.5 Timeouts y Fallback
 
-- Timeout de API Gateway: 30 segundos.
-- Timeout de invocación a Bedrock: 25 segundos (margen para procesamiento Lambda).
+- Lambda Timeout: 30 segundos.
+- Timeout interno de llamada a Mantle: 25 segundos (AbortController).
 - Si el timeout se excede, se retorna error y el frontend activa modo degradado (reglas determinísticas).
 
 ### 7.6 Límites de Entrada (Frontend)
@@ -484,7 +491,7 @@ interface AppState {
 | Error de parseo en filas | Analizador_CSV | Se reportan filas con error, análisis continúa con filas válidas |
 | Bedrock timeout | Agente_Auditor | Retorna error, frontend activa modo degradado |
 | Bedrock error genérico | Agente_Auditor | Log en CloudWatch, retorna error al frontend |
-| Payload inválido en API | API Gateway | HTTP 400 con descripción del error de validación |
+| Payload inválido | Lambda / Agente_Auditor | HTTP 400 con error tipado |
 | Lambda error interno | Lambda | HTTP 500, log en CloudWatch, frontend activa fallback |
 | Sin columnas temporales | Motor_Deteccion | Late-arriving data reportado como "no evaluable" |
 
@@ -609,61 +616,34 @@ Un test de integración del flujo completo:
 - Amplify detecta el framework y ejecuta `npm run build` automáticamente.
 - Se configura el dominio generado por Amplify como origen CORS permitido.
 - Variables de entorno del frontend (solo la URL del API Gateway):
-  - `VITE_API_URL`: URL base del API Gateway (e.g., `https://abc123.execute-api.us-east-1.amazonaws.com/prod`)
+  - `VITE_API_URL`: URL base del API Gateway (e.g., `https://abc123.execute-api.us-west-2.amazonaws.com/Prod`)
 
 ### 11.2 Backend — Lambda + API Gateway
 
-**Opción de despliegue recomendada:** AWS SAM (Serverless Application Model)
+**Despliegue:** AWS SAM. La fuente de verdad para la configuración es `backend/template.yaml` y `backend/samconfig.toml`.
 
-```yaml
-# template.yaml (SAM)
-AWSTemplateFormatVersion: '2010-09-09'
-Transform: AWS::Serverless-2016-10-31
-
-Globals:
-  Function:
-    Timeout: 30
-    Runtime: nodejs20.x
-    MemorySize: 256
-
-Resources:
-  AuditEnrichFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: dist/handler.handler
-      CodeUri: backend/
-      # El modelo se configura durante el despliegue. Verificar disponibilidad
-      # en la cuenta y región antes de seleccionar (ej: anthropic.claude-*, amazon.titan-*, etc.)
-      Environment:
-        Variables:
-          BEDROCK_MODEL_ID: "MODELO_A_CONFIGURAR"  # Seleccionar según disponibilidad en la cuenta/región
-          BEDROCK_REGION: "us-east-1"
-          ALLOWED_ORIGIN: "https://main.d1abc2def3.amplifyapp.com"
-      Policies:
-        - Statement:
-            - Effect: Allow
-              Action: bedrock:InvokeModel
-              Resource: "*"  # Restringir al ARN del modelo seleccionado una vez confirmado
-      Events:
-        AuditEnrich:
-          Type: Api
-          Properties:
-            Path: /audit/enrich
-            Method: post
-
-Outputs:
-  ApiUrl:
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod"
-```
+**Configuración desplegada:**
+- Runtime: nodejs22.x
+- Architecture: x86_64
+- Handler: handler.handler
+- Timeout: 30s, MemorySize: 256 MB
+- BuildMethod: esbuild (Target: es2022, Format: cjs)
+- Región: us-west-2
+- Modelo: openai.gpt-oss-20b (Bedrock Mantle Responses API)
+- Firma: SigV4 con service bedrock-mantle
+- API Gateway: POST /audit/enrich + OPTIONS /audit/enrich
+- Variables de entorno: BEDROCK_MODEL_ID, ALLOWED_ORIGIN
+- IAM: bedrock-mantle:CreateInference, GetProject, ListProjects, ListTagsForResource (Resource: "*")
 
 ### 11.3 Variables de Entorno
 
 | Variable | Ubicación | Descripción |
 |----------|-----------|-------------|
 | `VITE_API_URL` | Amplify (frontend) | URL del API Gateway |
-| `BEDROCK_MODEL_ID` | Lambda | ID del modelo de Bedrock (configurable; seleccionar según disponibilidad en cuenta/región, permisos y costo) |
-| `BEDROCK_REGION` | Lambda | Región de AWS donde está habilitado Bedrock |
+| `BEDROCK_MODEL_ID` | Lambda | ID del modelo de Bedrock Mantle (actualmente: openai.gpt-oss-20b) |
 | `ALLOWED_ORIGIN` | Lambda | Dominio del frontend para CORS |
+
+> **Nota:** `AWS_REGION` es proporcionada automáticamente por AWS Lambda y se utiliza para construir el endpoint regional de Bedrock Mantle (`https://bedrock-mantle.${AWS_REGION}.api.aws/v1/responses`). No se configura manualmente.
 
 ### 11.4 Proceso de Despliegue
 
@@ -708,7 +688,7 @@ Outputs:
 | AWS Amplify Hosting | Publica el frontend React | URL funcional del frontend en Amplify |
 | Amazon API Gateway | Expone el endpoint `/audit/enrich` | Invocación visible en la demo |
 | AWS Lambda (TypeScript) | Ejecuta la lógica del Agente_Auditor | Logs en CloudWatch, latencia visible |
-| Amazon Bedrock (Converse API) | Genera explicaciones y recomendaciones | Respuestas contextuales en el reporte |
+| Amazon Bedrock Mantle (Responses API) | Genera explicaciones y recomendaciones | Respuestas contextuales en el reporte, firma SigV4 |
 | Amazon CloudWatch | Logging de Lambda | Logs accesibles en la consola AWS |
 
 **Cómo verificarlo durante la demo:**
