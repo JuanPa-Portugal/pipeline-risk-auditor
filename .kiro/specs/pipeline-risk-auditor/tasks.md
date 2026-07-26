@@ -227,7 +227,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - Logs visibles en CloudWatch.
   - Commit sugerido: `deploy: MVP desplegado en AWS (Amplify + Lambda + Bedrock)`
 
-- [ ] 13. FASE 7 — Entregables
+- [x] 13. FASE 7 — Entregables
   - [x] 13.1 Crear README.md completo
     - Descripción del proyecto y problema que resuelve
     - Instrucciones de instalación y ejecución local (`npm install`, `npm run dev`, `npm test`)
@@ -243,7 +243,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Verificar que los 3 CSVs producen reportes coherentes con su nivel de riesgo
     - _Requisitos: 1.1, 2.1, 5.1_
 
-  - [ ] 13.3 Agregar checklist de entrega y preparación de demo
+  - [x] 13.3 Agregar checklist de entrega y preparación de demo
     - Checklist para demo online: URL funcional, CSV de prueba listo, flujo completo verificado
     - Notas para video de presentación: qué mostrar, en qué orden
     - Verificar que la app desplegada funciona con los CSVs de demo
