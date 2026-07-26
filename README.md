@@ -17,7 +17,7 @@ https://main.d15yyirx1kaofe.amplifyapp.com
 - **Carga y análisis de archivos CSV**: validación de formato, tamaño y estructura; perfilado automático de columnas.
 - **Motor determinístico de hallazgos**: detección de nulos, vacíos, duplicados exactos y fechas inválidas con clasificación de severidad (alto, medio, bajo).
 - **Identificación heurística de columnas candidatas**: sugerencias de claves primarias, claves de negocio y marcadores de carga incremental con confirmación del usuario.
-- **Cálculo de puntaje de riesgo**: fórmula ponderada con desglose por hallazgo, capped a 100.
+- **Cálculo de puntaje de riesgo**: fórmula ponderada con desglose por hallazgo, limitado a 100.
 - **Enriquecimiento por IA**: explicaciones técnicas, contextuales y acciones correctivas generadas por Amazon Bedrock Mantle. Incluye resumen ejecutivo y evaluación general del riesgo.
 - **Modo degradado**: si el servicio de IA no está disponible, el sistema opera con explicaciones basadas en reglas determinísticas sin perder funcionalidad.
 - **Exportación del reporte**: descarga del análisis completo en formato Markdown.
@@ -192,12 +192,24 @@ Las especificaciones están disponibles en `.kiro/specs/pipeline-risk-auditor/`.
 6. Si la IA no responde, se muestran explicaciones basadas en reglas con banner de modo degradado.
 7. El usuario puede confirmar o rechazar columnas candidatas y exportar el reporte en Markdown.
 
+## Observabilidad y privacidad
+
+La Lambda del Agente Auditor emite logs estructurados en formato JSON hacia Amazon CloudWatch, permitiendo monitorear el rendimiento y diagnosticar problemas sin exponer datos sensibles.
+
+**Eventos registrados:** `mantle_started`, `mantle_completed`, `mantle_timeout`, `mantle_error`, `mantle_unexpected_error`.
+
+Cada log incluye un `requestId` que permite correlacionar el inicio y la finalización de una invocación, junto con `findingCount`, `durationMs` y `explanationCount` según corresponda.
+
+**Privacidad:** Los logs no contienen prompts, filas del CSV, valores de datos, nombres de columnas ni texto generado por la IA.
+
+Para más detalles, consultar [docs/aws-setup.md](docs/aws-setup.md) y [docs/checklist-demo.md](docs/checklist-demo.md).
+
 ## Notas para la demo
 
 - Cargar un CSV con problemas variados para mostrar hallazgos de distintas severidades.
 - Verificar que las explicaciones muestran el badge "IA" indicando enriquecimiento exitoso.
 - Mostrar el resumen ejecutivo generado por Bedrock Mantle.
-- Demostrar el modo degradado desconectando temporalmente el backend (timeout forzado).
+- Si durante la demostración el servicio de IA entra en modo degradado, mostrar que la aplicación continúa funcionando.
 - Mostrar la consola de CloudWatch con logs de invocación Lambda.
 - Mostrar la consola de Amplify con el despliegue activo.
 - Exportar el reporte en Markdown para evidenciar la funcionalidad completa.

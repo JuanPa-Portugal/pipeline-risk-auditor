@@ -87,9 +87,39 @@ Permisos actuales de Lambda:
 
 Para el MVP actual se utiliza `Resource: "*"`. La política deberá endurecerse posteriormente siguiendo el principio de mínimo privilegio.
 
+## Observabilidad
+
+La Lambda emite logs estructurados en formato JSON hacia Amazon CloudWatch.
+
+**Log group:** `/aws/lambda/pipeline-risk-auditor-enrich`
+
+**Eventos registrados:**
+
+| Evento | Nivel | Descripción |
+|--------|-------|-------------|
+| `mantle_started` | info | Inicio de la invocación a Mantle |
+| `mantle_completed` | info | Respuesta exitosa de Mantle |
+| `mantle_timeout` | error | Mantle no respondió dentro del timeout |
+| `mantle_error` | error | Error HTTP de Mantle |
+| `mantle_unexpected_error` | error | Excepción inesperada durante la invocación |
+
+**Campos incluidos en cada log:**
+
+- `component`: siempre `"Agente_Auditor"`
+- `event`: nombre del evento
+- `requestId`: identificador de la invocación Lambda (para correlacionar inicio y finalización)
+- `findingCount`: cantidad de hallazgos enviados
+- `durationMs`: tiempo transcurrido desde el inicio de la llamada (disponible en todos excepto `mantle_started`)
+- `explanationCount`: cantidad de explicaciones generadas (solo en `mantle_completed`)
+- `errorName`: nombre de la excepción (solo en `mantle_unexpected_error`)
+
+**Privacidad:** Los logs no contienen prompts, filas del CSV, valores de datos, nombres de columnas, correos electrónicos ni texto generado por Mantle.
+
+**Validación realizada:** Se confirmaron dos invocaciones exitosas con 3 hallazgos y 3 explicaciones cada una. Los logs muestran `mantle_started` y `mantle_completed` con requestId correlacionado.
+
 ## Estado actual
 
-Completado:
+Desplegado y validado:
 
 - Configuración y autenticación de AWS CLI.
 - Selección y validación de us-west-2.
@@ -100,11 +130,15 @@ Completado:
 - Integración con Bedrock Mantle Responses API.
 - Firma AWS SigV4 con service `bedrock-mantle`.
 - Configuración inicial de permisos IAM para Mantle.
+- Frontend desplegado en AWS Amplify.
+- CORS configurado con el dominio productivo de Amplify.
+- Flujo completo validado: Amplify → API Gateway → Lambda → Bedrock Mantle.
+- Registros estructurados en CloudWatch.
 
-## Próximos pasos
+## Mejoras futuras
 
-- Validar el flujo completo desde el frontend hasta Lambda y Bedrock Mantle.
-- Configurar `ALLOWED_ORIGIN` con el dominio definitivo del frontend.
-- Ejecutar pruebas de errores, timeout y modo degradado.
-- Reducir los permisos IAM aplicando mínimo privilegio cuando AWS permita definir recursos más específicos para esta integración.
-- Documentar el endpoint desplegado sin incluir identificadores sensibles.
+- Reducir los permisos IAM aplicando mínimo privilegio cuando AWS permita definir recursos más específicos para Mantle.
+- Configurar autenticación en el API Gateway.
+- Configurar alarmas en CloudWatch para errores y timeouts.
+- Definir política de retención de logs en CloudWatch.
+- Implementar pruebas operativas periódicas del modo degradado.

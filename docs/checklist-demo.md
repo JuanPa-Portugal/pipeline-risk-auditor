@@ -2,16 +2,16 @@
 
 ## Requisitos previos
 
-- [ ] Node.js 22+ instalado
-- [ ] npm 10+ instalado
-- [ ] Navegador moderno (Chrome, Firefox o Edge)
-- [ ] Acceso a internet para la demo en producción
-- [ ] Archivos CSV de demo disponibles en `demo/`
+- [x] Node.js 22+ instalado
+- [x] npm 10+ instalado
+- [x] Navegador moderno (Chrome, Firefox o Edge)
+- [x] Acceso a internet para la demo en producción
+- [x] Archivos CSV de demo disponibles en `demo/`
 
 ## Verificación pre-demo (comprobaciones técnicas)
 
-- [ ] La URL de producción responde: https://main.d15yyirx1kaofe.amplifyapp.com
-- [ ] Cargar cualquier CSV y verificar que aparece el badge "Modo IA · Explicaciones enriquecidas"
+- [x] La URL de producción responde: https://main.d15yyirx1kaofe.amplifyapp.com
+- [x] Cargar cualquier CSV y verificar que aparece el badge "Modo IA · Explicaciones enriquecidas"
 - [ ] Si aparece "Modo local · Reglas", revisar CloudWatch para confirmar si Lambda/Mantle responde
 - [ ] Tener preparados los tres archivos: `demo/riesgo-bajo.csv`, `demo/riesgo-medio.csv`, `demo/riesgo-alto.csv`
 - [ ] Verificar que los archivos CSV se abren correctamente en un editor de texto (codificación UTF-8)
@@ -64,20 +64,20 @@ npm run dev
 
 ### Cargar `demo/riesgo-medio.csv`
 
-- [ ] Arrastrar o seleccionar el archivo
-- [ ] El análisis se ejecuta sin errores
+- [x] Arrastrar o seleccionar el archivo
+- [x] El análisis se ejecuta sin errores
 
 ### Resultado esperado
 
-- [ ] Puntaje: **30/100**
-- [ ] 3 hallazgos detectados, todos con severidad "medio":
-  - [ ] `empties-correo`: 2 vacíos (10%)
-  - [ ] `empties-departamento`: 2 vacíos (10%)
-  - [ ] `duplicates-exact`: 1 fila duplicada (5%)
+- [x] Puntaje: **30/100**
+- [x] 3 hallazgos detectados, todos con severidad "medio":
+  - [x] `empties-correo`: 2 vacíos (10%)
+  - [x] `empties-departamento`: 2 vacíos (10%)
+  - [x] `duplicates-exact`: 1 fila duplicada (5%)
 - [ ] Fechas en formatos mixtos (YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY) son reconocidas como válidas
 - [ ] 2024-02-29 y 2024-04-30 son fechas válidas, no generan hallazgo
-- [ ] Candidata heurística: `fecha_actualizacion` (marcador incremental)
-- [ ] Si hay IA: explicaciones contextuales para cada hallazgo
+- [x] Candidata heurística: `fecha_actualizacion` (marcador incremental)
+- [x] Si hay IA: explicaciones contextuales para cada hallazgo
 
 ### Explicación para el presentador
 
@@ -117,7 +117,7 @@ npm run dev
 ## Funcionalidades adicionales a mostrar
 
 - [ ] Badge "IA" o "Reglas" según la disponibilidad del servicio
-- [ ] Resumen ejecutivo generado por Bedrock Mantle (si está disponible)
+- [x] Resumen ejecutivo generado por Bedrock Mantle (si está disponible)
 - [ ] Confirmar/rechazar una columna candidata (en el caso de riesgo bajo o medio)
 - [ ] Exportar reporte en Markdown con el botón de descarga
 - [ ] Mostrar que el reporte descargado contiene hallazgos, puntaje y candidatas
@@ -132,6 +132,16 @@ npm run dev
 6. Exportar el reporte Markdown
 7. Mencionar brevemente: "El análisis determinístico se ejecuta en el navegador. Solo el resumen se envía al backend para explicaciones de IA."
 8. Si durante la demostración el servicio de IA entra en modo degradado, mostrar que la aplicación continúa funcionando
+
+## Validación de observabilidad
+
+- [x] Lambda desplegada correctamente
+- [x] `mantle_started` registrado en CloudWatch
+- [x] `mantle_completed` registrado en CloudWatch
+- [x] `requestId` correlacionado entre inicio y finalización
+- [x] `findingCount` igual a 3
+- [x] `explanationCount` igual a 3
+- [x] Ausencia de datos sensibles en los logs
 
 ## Plan de contingencia
 
