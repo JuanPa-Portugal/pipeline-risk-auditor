@@ -236,7 +236,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Casos de uso y notas para la presentación
     - _Requisitos: 7.1_
 
-  - [ ] 13.2 Crear archivos CSV de demostración
+  - [x] 13.2 Crear archivos CSV de demostración
     - Crear `demo/riesgo-bajo.csv`: datos limpios, pocas issues (pocos nulos, sin duplicados)
     - Crear `demo/riesgo-medio.csv`: algunos nulos, fechas en formatos mixtos, pocas candidatas
     - Crear `demo/riesgo-alto.csv`: muchos nulos, duplicados frecuentes, sin columnas temporales claras
