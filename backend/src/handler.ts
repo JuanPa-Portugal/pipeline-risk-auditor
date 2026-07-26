@@ -22,7 +22,7 @@ function getRequiredEnv(name: string): string {
 }
 
 function corsHeaders(allowedOrigin: string): Record<string, string> {
-  return { 'Access-Control-Allow-Origin': allowedOrigin, 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Content-Type': 'application/json' };
+  return { 'Access-Control-Allow-Origin': allowedOrigin, 'Access-Control-Allow-Methods': 'POST, OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type', 'Content-Type': 'application/json; charset=utf-8' };
 }
 
 function errorResult(statusCode: number, error: string, message: string, allowedOrigin: string): APIGatewayProxyResult {
@@ -73,7 +73,7 @@ function parseMantleResponse(text: string, findings: EnrichRequestFinding[]): En
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   let bedrockModelId: string;
   let allowedOrigin: string;
-  try { bedrockModelId = getRequiredEnv('BEDROCK_MODEL_ID'); allowedOrigin = getRequiredEnv('ALLOWED_ORIGIN'); } catch { return { statusCode: 500, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'SERVER_CONFIGURATION_ERROR', message: 'El servidor no está configurado correctamente.', fallbackAdvice: 'Utilice las explicaciones basadas en reglas.' }) }; }
+  try { bedrockModelId = getRequiredEnv('BEDROCK_MODEL_ID'); allowedOrigin = getRequiredEnv('ALLOWED_ORIGIN'); } catch { return { statusCode: 500, headers: { 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify({ error: 'SERVER_CONFIGURATION_ERROR', message: 'El servidor no está configurado correctamente.', fallbackAdvice: 'Utilice las explicaciones basadas en reglas.' }) }; }
 
   if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: corsHeaders(allowedOrigin), body: '' };
   if (event.httpMethod !== 'POST') return errorResult(405, 'METHOD_NOT_ALLOWED', 'Solo se acepta el método POST.', allowedOrigin);

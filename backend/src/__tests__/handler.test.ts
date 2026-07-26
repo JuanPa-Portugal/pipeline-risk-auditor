@@ -129,6 +129,13 @@ describe('Lambda handler - /audit/enrich (Mantle)', () => {
       expect(b.explanations[0].findingId).toBe('f1');
       expect(b.explanations[1].findingId).toBe('f2');
     });
+
+    it('respuesta exitosa incluye Content-Type con charset=utf-8', async () => {
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: mantleSuccessText(['nulls-nombre']) } as MantleCallResult);
+      const r = await handler(makeEvent({ body: JSON.stringify(validPayload()) }));
+      expect(r.statusCode).toBe(200);
+      expect(r.headers?.['Content-Type']).toBe('application/json; charset=utf-8');
+    });
   });
 
   describe('callMantle - timeout', () => {
