@@ -228,7 +228,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - Commit sugerido: `deploy: MVP desplegado en AWS (Amplify + Lambda + Bedrock)`
 
 - [ ] 13. FASE 7 — Entregables
-  - [ ] 13.1 Crear README.md completo
+  - [x] 13.1 Crear README.md completo
     - Descripción del proyecto y problema que resuelve
     - Instrucciones de instalación y ejecución local (`npm install`, `npm run dev`, `npm test`)
     - Arquitectura y servicios AWS usados (diagrama simplificado)
