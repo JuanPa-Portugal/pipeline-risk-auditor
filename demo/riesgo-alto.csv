@@ -1,0 +1,21 @@
+id,nombre,correo,departamento,registro
+1,Ana García,ana.garcia@empresa.com,Ventas,pendiente
+1,Ana García,ana.garcia@empresa.com,Ventas,pendiente
+1,Ana García,ana.garcia@empresa.com,Ventas,pendiente
+1,Ana García,ana.garcia@empresa.com,Ventas,pendiente
+1,Ana García,ana.garcia@empresa.com,Ventas,pendiente
+1,Ana García,ana.garcia@empresa.com,Ventas,pendiente
+2,Carlos López,,Ingeniería,en-revision
+3,María Rodríguez,,,sin-datos
+4,José Martínez,,Finanzas,completo
+5,Laura Hernández,laura.hernandez@empresa.com,,aprobado
+6,Pedro Sánchez,pedro.sanchez@empresa.com,,rechazado
+7,Sofía Ramírez,sofia.ramirez@empresa.com,,parcial
+8,Diego Torres,,Marketing,en-revision
+9,Valentina Flores,valentina.flores@empresa.com,,pendiente
+10,Andrés Morales,andres.morales@empresa.com,,completo
+11,Camila Vargas,,Ventas,aprobado
+12,Felipe Rojas,felipe.rojas@empresa.com,,parcial
+13,Isabella Castro,isabella.castro@empresa.com,Ingeniería,completo
+14,Mateo Ortiz,mateo.ortiz@empresa.com,Marketing,aprobado
+15,Nicolás Herrera,nicolas.herrera@empresa.com,Finanzas,en-revision
