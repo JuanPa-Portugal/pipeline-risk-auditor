@@ -1,4 +1,4 @@
-import type { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import type { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { callMantle } from './mantle-client';
 
 type Severity = 'alto' | 'medio' | 'bajo';
@@ -111,7 +111,9 @@ function parseMantleResponse(text: string, findings: EnrichRequestFinding[]): En
   };
 }
 
-export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+export async function handler(event: APIGatewayProxyEvent, context?: Context): Promise<APIGatewayProxyResult> {
+  const requestId = context?.awsRequestId ?? event.requestContext?.requestId ?? 'unknown';
+
   let bedrockModelId: string;
   let allowedOrigin: string;
   try { bedrockModelId = getRequiredEnv('BEDROCK_MODEL_ID'); allowedOrigin = getRequiredEnv('ALLOWED_ORIGIN'); } catch { return { statusCode: 500, headers: { 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify({ error: 'SERVER_CONFIGURATION_ERROR', message: 'El servidor no está configurado correctamente.', fallbackAdvice: 'Utilice las explicaciones basadas en reglas.' }) }; }
@@ -130,21 +132,34 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
   const sanitizedRequest = sanitizeRequest(validation.data);
   const prompt = buildPrompt(sanitizedRequest);
+  const findingCount = sanitizedRequest.findings.length;
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), BEDROCK_TIMEOUT_MS);
 
+  const startMs = Date.now();
+  console.info(JSON.stringify({ component: 'Agente_Auditor', event: 'mantle_started', requestId, findingCount }));
+
   try {
     const mantleResult = await callMantle(prompt, bedrockModelId, controller.signal);
+    const durationMs = Date.now() - startMs;
+
     if (!mantleResult.success) {
-      if (mantleResult.isTimeout) { console.error('[Agente_Auditor] Timeout de Mantle'); return errorResult(504, 'BEDROCK_TIMEOUT', 'El servicio de IA no respondió en el tiempo esperado.', allowedOrigin); }
-      console.error('[Agente_Auditor] Error de Mantle'); return errorResult(502, 'BEDROCK_ERROR', 'Error al comunicarse con el servicio de IA.', allowedOrigin);
+      if (mantleResult.isTimeout) {
+        console.error(JSON.stringify({ component: 'Agente_Auditor', event: 'mantle_timeout', requestId, findingCount, durationMs }));
+        return errorResult(504, 'BEDROCK_TIMEOUT', 'El servicio de IA no respondió en el tiempo esperado.', allowedOrigin);
+      }
+      console.error(JSON.stringify({ component: 'Agente_Auditor', event: 'mantle_error', requestId, findingCount, durationMs }));
+      return errorResult(502, 'BEDROCK_ERROR', 'Error al comunicarse con el servicio de IA.', allowedOrigin);
     }
+
     const enrichResponse = parseMantleResponse(mantleResult.text, sanitizedRequest.findings);
+    console.info(JSON.stringify({ component: 'Agente_Auditor', event: 'mantle_completed', requestId, findingCount, durationMs, explanationCount: enrichResponse.explanations.length }));
     return { statusCode: 200, headers: corsHeaders(allowedOrigin), body: JSON.stringify(enrichResponse) };
   } catch (err: unknown) {
+    const durationMs = Date.now() - startMs;
     const errorName = err instanceof Error ? err.name : 'UnknownError';
-    console.error('[Agente_Auditor] Error inesperado:', errorName);
+    console.error(JSON.stringify({ component: 'Agente_Auditor', event: 'mantle_unexpected_error', requestId, findingCount, durationMs, errorName }));
     return errorResult(502, 'BEDROCK_ERROR', 'Error al comunicarse con el servicio de IA.', allowedOrigin);
   } finally { clearTimeout(timer); }
 }
