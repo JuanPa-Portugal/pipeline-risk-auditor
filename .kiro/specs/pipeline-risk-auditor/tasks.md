@@ -200,7 +200,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - Commit sugerido: `feat: Agente_Auditor preparado para despliegue AWS`
 
 - [ ] 11. FASE 6 — Despliegue
-  - [ ] 11.1 Crear template SAM y desplegar backend
+  - [x] 11.1 Crear template SAM y desplegar backend
     - Crear `backend/template.yaml`: Lambda + API Gateway
     - Runtime: nodejs22.x
     - Usar Metadata BuildMethod: esbuild para transpilar y empaquetar backend/src/handler.ts
