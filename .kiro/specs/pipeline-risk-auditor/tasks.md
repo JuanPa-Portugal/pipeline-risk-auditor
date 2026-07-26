@@ -6,7 +6,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
 
 ## Tasks
 
-- [ ] 1. FASE 1 — Base local
+- [x] 1. FASE 1 — Base local
   - [x] 1.1 Crear estructura del proyecto React + TypeScript + Vite + Tailwind CSS
     - Inicializar proyecto con Vite (template react-ts)
     - Configurar Tailwind CSS con PostCSS
@@ -35,7 +35,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - Verificar que `npm run dev` inicia la aplicación vacía.
   - Commit sugerido: `feat: estructura base del proyecto con tipos e interfaces`
 
-- [ ] 3. FASE 2 — Motor determinístico
+- [x] 3. FASE 2 — Motor determinístico
   - [x] 3.1 Implementar Analizador_CSV (`src/modules/analizador-csv.ts`)
     - Implementar `validateFile(file: File)`: validar extensión .csv, tamaño ≤10MB, verificar que no esté vacío
     - Implementar `parse(file: File)`: leer como texto UTF-8, parsear con PapaParse, generar CSVSummary con perfilado de columnas (tipo inferido, nullCount, emptyCount, uniqueCount, sampleValues)
@@ -94,7 +94,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - Módulos exportan correctamente y pueden importarse sin error.
   - Commit sugerido: `feat: motor determinístico completo con tests`
 
-- [ ] 5. FASE 3 — MVP web local
+- [x] 5. FASE 3 — MVP web local
   - [x] 5.1 Crear AppContext con React Context + useReducer
     - Implementar `src/context/AppContext.tsx` con AppState del diseño
     - Implementar reducer con acciones: SET_FILE, SET_SUMMARY, SET_SAMPLE_ROWS, SET_FINDINGS, SET_CANDIDATES, SET_RISK_SCORE, SET_ENRICHMENT, SET_AI_STATUS, SET_PHASE, SET_ERROR, RESET
@@ -199,7 +199,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - No se envían filas completas del CSV al backend.
   - Commit sugerido: `feat: Agente_Auditor preparado para despliegue AWS`
 
-- [ ] 11. FASE 6 — Despliegue
+- [x] 11. FASE 6 — Despliegue
   - [x] 11.1 Crear template SAM y desplegar backend
     - Crear `backend/template.yaml`: Lambda + API Gateway
     - Runtime: nodejs22.x
@@ -213,7 +213,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Verificar endpoint funcional con curl o Postman después del despliegue
     - _Requisitos: 6.1_
 
-  - [ ] 11.2 Configurar Amplify hosting y conectar frontend
+  - [x] 11.2 Configurar Amplify hosting y conectar frontend
     - Crear `amplify.yml` con configuración de build del frontend
     - Conectar repositorio a Amplify
     - Configurar VITE_API_URL en variables de entorno de Amplify con la URL del API Gateway
@@ -221,7 +221,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Verificar logs en CloudWatch
     - _Requisitos: 6.1, 7.1_
 
-- [ ] 12. Checkpoint Fase 6
+- [x] 12. Checkpoint Fase 6
   - App accesible desde la URL de Amplify.
   - Agente_Auditor responde desde Lambda.
   - Logs visibles en CloudWatch.
