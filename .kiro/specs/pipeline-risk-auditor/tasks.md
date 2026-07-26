@@ -164,7 +164,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Implementar validación del payload: estructura, tipos, tamaño máximo 64 KB
     - Implementar sanitización de nombres de columnas: máx 128 chars, solo alfanuméricos + guiones
     - Implementar construcción del prompt con delimitadores claros (prevención de prompt injection)
-    - Implementar invocación a Amazon Bedrock vía Converse API con BEDROCK_MODEL_ID configurable y timeout 25s
+    - Implementar invocación mediante Amazon Bedrock Mantle Responses API, utilizando BEDROCK_MODEL_ID configurable y solicitudes firmadas con AWS SigV4 (service: bedrock-mantle), timeout 25s
     - Implementar parseo de respuesta de Bedrock → EnrichResponse
     - Implementar manejo de errores: timeout → error tipado, error genérico → log + error tipado
     - Implementar CORS restringido con variable ALLOWED_ORIGIN
@@ -208,7 +208,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Memoria: 256 MB
     - Región de despliegue: us-west-2 (modelo validado en esta región)
     - Variables de entorno: BEDROCK_MODEL_ID (configurable), ALLOWED_ORIGIN (configurable)
-    - Política IAM: bedrock:InvokeModel restringida al ARN del modelo confirmado + logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents
+    - Política IAM: bedrock-mantle:CreateInference, bedrock-mantle:GetProject, bedrock-mantle:ListProjects, bedrock-mantle:ListTagsForResource (Resource: "*" para el MVP; restringir posteriormente con mínimo privilegio) + logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents
     - Desplegar: `sam build && sam deploy --guided`
     - Verificar endpoint funcional con curl o Postman después del despliegue
     - _Requisitos: 6.1_
