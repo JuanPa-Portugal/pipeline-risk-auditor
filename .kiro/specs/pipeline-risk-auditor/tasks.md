@@ -249,7 +249,7 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
     - Verificar que la app desplegada funciona con los CSVs de demo
     - _Requisitos: 7.1, 7.3_
 
-- [ ] 14. Checkpoint Final
+- [x] 14. Checkpoint Final
   - README listo, CSVs de demo probados, app desplegada y funcional.
   - Commit sugerido: `docs: README, CSVs de demo y checklist de entrega`
 
