@@ -156,20 +156,22 @@ export async function callMantle(
 }
 
 /**
- * Extracts output_text from Mantle response output array.
+ * Extracts ALL output_text blocks from Mantle response output array.
  * Only considers elements with type = "message", and within their content
  * only elements with type = "output_text". Ignores "reasoning" and "reasoning_text".
+ * Concatenates all output_text blocks in order.
  */
 function extractOutputText(output: MantleResponseOutput[]): string | null {
+  const parts: string[] = [];
   for (const item of output) {
     if (item.type !== 'message') continue;
     if (!item.content) continue;
 
     for (const block of item.content) {
       if (block.type === 'output_text' && block.text) {
-        return block.text;
+        parts.push(block.text);
       }
     }
   }
-  return null;
+  return parts.length > 0 ? parts.join('') : null;
 }

@@ -183,4 +183,170 @@ describe('Lambda handler - /audit/enrich (Mantle)', () => {
       expect(signal).toBeInstanceOf(AbortSignal);
     });
   });
+
+  describe('buildPrompt — findingId count and listing', () => {
+    it('prompt contiene la cantidad exacta y los IDs de los findings', async () => {
+      const p = validPayload();
+      p.findings = [
+        { id: 'nulls-col-a', category: 'nulls', severity: 'alto', description: 'd1', count: 10 },
+        { id: 'empties-col-b', category: 'empties', severity: 'medio', description: 'd2', count: 5, percentage: 8 },
+      ];
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: mantleSuccessText(['nulls-col-a', 'empties-col-b']) } as MantleCallResult);
+      await handler(makeEvent({ body: JSON.stringify(p) }));
+      const promptArg = mockCallMantle.mock.calls[0]?.[0] as string;
+      expect(promptArg).toContain('EXACTAMENTE 2 explicaciones');
+      expect(promptArg).toContain('"nulls-col-a"');
+      expect(promptArg).toContain('"empties-col-b"');
+    });
+
+    it('serializa correctamente IDs con comillas o caracteres especiales en la lista del prompt', async () => {
+      const p = validPayload();
+      p.findings = [
+        { id: 'null"s-col', category: 'nulls', severity: 'alto', description: 'd1', count: 10 },
+        { id: 'empty<tag>', category: 'empties', severity: 'medio', description: 'd2', count: 5 },
+      ];
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: mantleSuccessText(['null"s-col', 'empty<tag>']) } as MantleCallResult);
+      await handler(makeEvent({ body: JSON.stringify(p) }));
+      const promptArg = mockCallMantle.mock.calls[0]?.[0] as string;
+      // JSON.stringify properly escapes quotes
+      expect(promptArg).toContain('["null\\"s-col","empty<tag>"]');
+      expect(promptArg).toContain('EXACTAMENTE 2 explicaciones');
+    });
+  });
+
+  describe('parseMantleResponse — findingId robustness', () => {
+    it('asocia todos los findingId exactos correctamente', async () => {
+      const p = validPayload();
+      p.findings = [
+        { id: 'f1', category: 'nulls', severity: 'alto', description: 'd1', count: 10 },
+        { id: 'f2', category: 'empties', severity: 'medio', description: 'd2', count: 5 },
+        { id: 'f3', category: 'duplicates', severity: 'bajo', description: 'd3', count: 2 },
+      ];
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: mantleSuccessText(['f1', 'f2', 'f3']) } as MantleCallResult);
+      const r = await handler(makeEvent({ body: JSON.stringify(p) }));
+      const b = JSON.parse(r.body);
+      expect(b.explanations).toHaveLength(3);
+      expect(b.explanations[0].findingId).toBe('f1');
+      expect(b.explanations[1].findingId).toBe('f2');
+      expect(b.explanations[2].findingId).toBe('f3');
+      expect(b.explanations[0].technicalImpact).toBe('Impacto para f1');
+    });
+
+    it('findingId con espacios alrededor se asocia correctamente via trim', async () => {
+      const p = validPayload();
+      p.findings = [
+        { id: 'f1', category: 'nulls', severity: 'alto', description: 'd1', count: 10 },
+      ];
+      const responseWithSpaces = JSON.stringify({
+        explanations: [{ findingId: '  f1  ', technicalImpact: 'impacto trimmed', contextualExplanation: 'ctx', correctiveAction: 'action', priority: 'high' }],
+        executiveSummary: 'resumen',
+        overallRiskAssessment: 'evaluacion',
+      });
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: responseWithSpaces } as MantleCallResult);
+      const r = await handler(makeEvent({ body: JSON.stringify(p) }));
+      const b = JSON.parse(r.body);
+      expect(b.explanations[0].findingId).toBe('f1');
+      expect(b.explanations[0].technicalImpact).toBe('impacto trimmed');
+    });
+
+    it('findingId omitido usa fallback solo para ese hallazgo', async () => {
+      const p = validPayload();
+      p.findings = [
+        { id: 'f1', category: 'nulls', severity: 'alto', description: 'd1', count: 10 },
+        { id: 'f2', category: 'empties', severity: 'medio', description: 'd2', count: 5 },
+      ];
+      const partialResponse = JSON.stringify({
+        explanations: [{ findingId: 'f1', technicalImpact: 'impacto f1', contextualExplanation: 'ctx f1', correctiveAction: 'action f1', priority: 'high' }],
+        executiveSummary: 'resumen',
+        overallRiskAssessment: 'evaluacion',
+      });
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: partialResponse } as MantleCallResult);
+      const r = await handler(makeEvent({ body: JSON.stringify(p) }));
+      const b = JSON.parse(r.body);
+      expect(b.explanations).toHaveLength(2);
+      expect(b.explanations[0].findingId).toBe('f1');
+      expect(b.explanations[0].technicalImpact).toBe('impacto f1');
+      expect(b.explanations[1].findingId).toBe('f2');
+      expect(b.explanations[1].technicalImpact).toContain('Hallazgo f2 requiere revisión');
+    });
+
+    it('ignora IDs desconocidos que no corresponden a ningún finding', async () => {
+      const p = validPayload();
+      p.findings = [
+        { id: 'f1', category: 'nulls', severity: 'alto', description: 'd1', count: 10 },
+      ];
+      const responseWithUnknown = JSON.stringify({
+        explanations: [
+          { findingId: 'f1', technicalImpact: 'impacto f1', contextualExplanation: 'ctx', correctiveAction: 'action', priority: 'high' },
+          { findingId: 'DESCONOCIDO', technicalImpact: 'no deberia aparecer', contextualExplanation: 'x', correctiveAction: 'x', priority: 'low' },
+        ],
+        executiveSummary: 'resumen',
+        overallRiskAssessment: 'evaluacion',
+      });
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: responseWithUnknown } as MantleCallResult);
+      const r = await handler(makeEvent({ body: JSON.stringify(p) }));
+      const b = JSON.parse(r.body);
+      expect(b.explanations).toHaveLength(1);
+      expect(b.explanations[0].findingId).toBe('f1');
+      expect(b.explanations[0].technicalImpact).toBe('impacto f1');
+    });
+
+    it('ignora findingId duplicado y usa solo la primera coincidencia', async () => {
+      const p = validPayload();
+      p.findings = [
+        { id: 'f1', category: 'nulls', severity: 'alto', description: 'd1', count: 10 },
+      ];
+      const responseWithDupe = JSON.stringify({
+        explanations: [
+          { findingId: 'f1', technicalImpact: 'primera', contextualExplanation: 'ctx1', correctiveAction: 'action1', priority: 'high' },
+          { findingId: 'f1', technicalImpact: 'segunda', contextualExplanation: 'ctx2', correctiveAction: 'action2', priority: 'low' },
+        ],
+        executiveSummary: 'resumen',
+        overallRiskAssessment: 'evaluacion',
+      });
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: responseWithDupe } as MantleCallResult);
+      const r = await handler(makeEvent({ body: JSON.stringify(p) }));
+      const b = JSON.parse(r.body);
+      expect(b.explanations).toHaveLength(1);
+      expect(b.explanations[0].findingId).toBe('f1');
+      expect(b.explanations[0].technicalImpact).toBe('primera');
+    });
+
+    it('ignora elemento de explanations cuyo findingId no es string y usa fallback', async () => {
+      const p = validPayload();
+      p.findings = [
+        { id: 'f1', category: 'nulls', severity: 'alto', description: 'd1', count: 10 },
+      ];
+      const responseWithBadType = JSON.stringify({
+        explanations: [
+          { findingId: 123, technicalImpact: 'no valido', contextualExplanation: 'x', correctiveAction: 'x', priority: 'high' },
+        ],
+        executiveSummary: 'resumen',
+        overallRiskAssessment: 'evaluacion',
+      });
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: responseWithBadType } as MantleCallResult);
+      const r = await handler(makeEvent({ body: JSON.stringify(p) }));
+      const b = JSON.parse(r.body);
+      expect(b.explanations).toHaveLength(1);
+      expect(b.explanations[0].findingId).toBe('f1');
+      expect(b.explanations[0].technicalImpact).toContain('Hallazgo f1 requiere revisión');
+    });
+
+    it('finding.id original con espacios se conserva en la salida aunque Mantle responda normalizado', async () => {
+      const p = validPayload();
+      p.findings = [
+        { id: ' f1 ', category: 'nulls', severity: 'alto', description: 'd1', count: 10 },
+      ];
+      const responseNormalized = JSON.stringify({
+        explanations: [{ findingId: 'f1', technicalImpact: 'impacto normalizado', contextualExplanation: 'ctx', correctiveAction: 'action', priority: 'high' }],
+        executiveSummary: 'resumen',
+        overallRiskAssessment: 'evaluacion',
+      });
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: responseNormalized } as MantleCallResult);
+      const r = await handler(makeEvent({ body: JSON.stringify(p) }));
+      const b = JSON.parse(r.body);
+      expect(b.explanations[0].findingId).toBe(' f1 ');
+      expect(b.explanations[0].technicalImpact).toBe('impacto normalizado');
+    });
+  });
 });

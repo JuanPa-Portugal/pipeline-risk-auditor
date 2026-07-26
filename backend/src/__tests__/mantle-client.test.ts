@@ -170,4 +170,39 @@ describe('mantle-client — callMantle', () => {
       expect(result.isTimeout).toBe(false);
     }
   });
+
+  it('concatena múltiples bloques output_text de un mismo message en orden', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(makeMantleResponse([
+        { type: 'message', content: [
+          { type: 'output_text', text: '{"explanations":' },
+          { type: 'output_text', text: '[],"executiveSummary":"ok","overallRiskAssessment":"ok"}' },
+        ]},
+      ])),
+    });
+
+    const result = await callMantle('prompt', 'model', new AbortController().signal);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.text).toBe('{"explanations":[],"executiveSummary":"ok","overallRiskAssessment":"ok"}');
+    }
+  });
+
+  it('concatena output_text de múltiples message elements en orden', async () => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(makeMantleResponse([
+        { type: 'message', content: [{ type: 'output_text', text: 'parte1' }] },
+        { type: 'reasoning', content: [{ type: 'reasoning_text', text: 'ignorar' }] },
+        { type: 'message', content: [{ type: 'output_text', text: 'parte2' }] },
+      ])),
+    });
+
+    const result = await callMantle('prompt', 'model', new AbortController().signal);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.text).toBe('parte1parte2');
+    }
+  });
 });
