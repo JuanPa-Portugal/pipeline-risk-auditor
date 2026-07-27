@@ -33,7 +33,6 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
 - [x] 2. Checkpoint Fase 1
   - Verificar que el proyecto compila sin errores (`npm run build`).
   - Verificar que `npm run dev` inicia la aplicación vacía.
-  - Commit sugerido: `feat: estructura base del proyecto con tipos e interfaces`
 
 - [x] 3. FASE 2 — Motor determinístico
   - [x] 3.1 Implementar Analizador_CSV (`src/modules/analizador-csv.ts`)
@@ -92,7 +91,6 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
 - [x] 4. Checkpoint Fase 2
   - Todos los tests pasan (`npx vitest --run`).
   - Módulos exportan correctamente y pueden importarse sin error.
-  - Commit sugerido: `feat: motor determinístico completo con tests`
 
 - [x] 5. FASE 3 — MVP web local
   - [x] 5.1 Crear AppContext con React Context + useReducer
@@ -136,7 +134,6 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
 - [x] 6. Checkpoint Fase 3
   - Demo local funcional: cargar CSV, ver hallazgos, confirmar candidatas, exportar Markdown.
   - Todo funciona sin AWS en modo reglas.
-  - Commit sugerido: `feat: MVP web local funcional con modo reglas`
 
 - [x] 7. FASE 4 — Preparación AWS
   - [x] 7.1 Verificar entorno AWS y acceso a Bedrock
@@ -150,7 +147,6 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
 
 - [x] 8. Checkpoint Fase 4
   - AWS CLI y SAM funcionan, Bedrock está habilitado con un modelo accesible.
-  - Commit sugerido: `docs: validación de entorno AWS y modelo Bedrock`
 
 - [x] 9. FASE 5 — Agente_Auditor
   - [x] 9.1 Implementar mock local del endpoint POST /audit/enrich
@@ -197,7 +193,6 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - El flujo de integración local CSV → análisis → enriquecimiento mock funciona correctamente.
   - El modo degradado funciona si el servicio de IA no está disponible.
   - No se envían filas completas del CSV al backend.
-  - Commit sugerido: `feat: Agente_Auditor preparado para despliegue AWS`
 
 - [x] 11. FASE 6 — Despliegue
   - [x] 11.1 Crear template SAM y desplegar backend
@@ -225,7 +220,6 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
   - App accesible desde la URL de Amplify.
   - Agente_Auditor responde desde Lambda.
   - Logs visibles en CloudWatch.
-  - Commit sugerido: `deploy: MVP desplegado en AWS (Amplify + Lambda + Bedrock)`
 
 - [x] 13. FASE 7 — Entregables
   - [x] 13.1 Crear README.md completo
@@ -251,7 +245,6 @@ Implementación secuencial en 7 fases del MVP de Pipeline Risk Auditor. Cada fas
 
 - [x] 14. Checkpoint Final
   - README listo, CSVs de demo probados, app desplegada y funcional.
-  - Commit sugerido: `docs: README, CSVs de demo y checklist de entrega`
 
 ## Notes
 
