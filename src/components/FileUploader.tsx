@@ -22,11 +22,9 @@ export function FileUploader({ onFileAccepted, isLoading = false, disabled = fal
   const isDisabled = disabled || isLoading;
 
   const processFile = useCallback(async (file: File) => {
-    // Clear previous error
     setError(null);
     dispatch({ type: 'SET_ERROR', payload: null });
 
-    // Validate using AnalizadorCSV
     const validation = analizador.validateFile(file);
     if (!validation.valid) {
       const message = validation.error ?? 'Archivo inválido.';
@@ -35,7 +33,6 @@ export function FileUploader({ onFileAccepted, isLoading = false, disabled = fal
       return;
     }
 
-    // Dispatch file metadata to context
     dispatch({
       type: 'SET_FILE',
       payload: {
@@ -45,7 +42,6 @@ export function FileUploader({ onFileAccepted, isLoading = false, disabled = fal
       },
     });
 
-    // Execute the callback
     try {
       await onFileAccepted(file);
     } catch (err) {
@@ -62,7 +58,6 @@ export function FileUploader({ onFileAccepted, isLoading = false, disabled = fal
     if (files && files.length > 0) {
       void processFile(files[0]!);
     }
-    // Reset input to allow re-selecting the same file
     if (inputRef.current) {
       inputRef.current.value = '';
     }
@@ -117,7 +112,7 @@ export function FileUploader({ onFileAccepted, isLoading = false, disabled = fal
   }, [handleButtonClick]);
 
   return (
-    <div className="w-full max-w-lg mx-auto">
+    <div className="w-full max-w-xl mx-auto">
       <div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -130,29 +125,37 @@ export function FileUploader({ onFileAccepted, isLoading = false, disabled = fal
         aria-label="Zona de carga de archivo CSV"
         className={`
           relative flex flex-col items-center justify-center
-          w-full p-8 border-2 border-dashed rounded-lg
-          transition-colors duration-200 cursor-pointer
+          w-full py-12 px-6 border-2 border-dashed rounded-xl
+          shadow-sm cursor-pointer
+          transition-all duration-200
           ${isDisabled ? 'opacity-50 cursor-not-allowed border-gray-300 bg-gray-50' : ''}
-          ${isDragOver && !isDisabled ? 'border-blue-500 bg-blue-50' : ''}
-          ${!isDragOver && !isDisabled ? 'border-gray-400 bg-white hover:border-blue-400 hover:bg-gray-50' : ''}
+          ${isDragOver && !isDisabled ? 'border-cyan-500 bg-cyan-50 shadow-md scale-[1.01]' : ''}
+          ${!isDragOver && !isDisabled ? 'border-[#1e3a5f]/30 bg-white hover:border-cyan-400 hover:bg-cyan-50/30 hover:shadow-md' : ''}
         `}
       >
         {isLoading ? (
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-10 h-10 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin" />
             <p className="text-sm text-gray-600">Procesando archivo...</p>
           </div>
         ) : (
           <>
-            <p className="text-base font-medium text-gray-700 mb-1">
+            {/* Upload icon */}
+            <svg className="w-12 h-12 text-[#1e3a5f]/60 mb-4" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <path d="M24 6v24M16 14l8-8 8 8" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M8 32v6a4 4 0 004 4h24a4 4 0 004-4v-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"/>
+            </svg>
+            <p className="text-base font-semibold text-[#1e3a5f] mb-1">
               Arrastra un archivo CSV aquí
             </p>
-            <p className="text-sm text-gray-500 mb-3">
-              o haz clic para seleccionar
+            <p className="text-sm text-gray-500 mb-4">
+              o haz clic para <span className="font-medium text-cyan-700 underline underline-offset-2">seleccionar archivo</span>
             </p>
-            <p className="text-xs text-gray-400">
-              Formato: CSV · Tamaño máximo: {maxSizeMB} MB
-            </p>
+            <div className="flex flex-wrap justify-center gap-3 text-xs text-gray-500">
+              <span className="px-2 py-1 bg-gray-100 rounded">CSV UTF-8</span>
+              <span className="px-2 py-1 bg-gray-100 rounded">Máximo {maxSizeMB} MB</span>
+              <span className="px-2 py-1 bg-gray-100 rounded">Análisis local y seguro</span>
+            </div>
           </>
         )}
       </div>
