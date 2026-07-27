@@ -349,4 +349,48 @@ describe('Lambda handler - /audit/enrich (Mantle)', () => {
       expect(b.explanations[0].technicalImpact).toBe('impacto normalizado');
     });
   });
+
+  describe('buildPrompt — clasificación de riesgo autoritativa', () => {
+    it.each([
+      { score: 0, expectedLevel: 'bajo' },
+      { score: 29, expectedLevel: 'bajo' },
+      { score: 30, expectedLevel: 'medio' },
+      { score: 59, expectedLevel: 'medio' },
+      { score: 60, expectedLevel: 'alto' },
+      { score: 100, expectedLevel: 'alto' },
+    ])('riskScore=$score → prompt contiene "Clasificación de riesgo: $expectedLevel"', async ({ score, expectedLevel }) => {
+      const p = validPayload();
+      p.riskScore = score;
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: mantleSuccessText(['nulls-nombre']) } as MantleCallResult);
+      await handler(makeEvent({ body: JSON.stringify(p) }));
+      const promptArg = mockCallMantle.mock.calls[0]?.[0] as string;
+      expect(promptArg).toContain(`Clasificación de riesgo: ${expectedLevel}`);
+      expect(promptArg).toContain(`Puntaje de riesgo: ${score}/100`);
+    });
+
+    it('riskScore=60 incluye la regla que prohíbe reinterpretar la clasificación', async () => {
+      const p = validPayload();
+      p.riskScore = 60;
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: mantleSuccessText(['nulls-nombre']) } as MantleCallResult);
+      await handler(makeEvent({ body: JSON.stringify(p) }));
+      const promptArg = mockCallMantle.mock.calls[0]?.[0] as string;
+      expect(promptArg).toContain('REGLA SOBRE CLASIFICACIÓN DE RIESGO');
+      expect(promptArg).toContain('utiliza EXACTAMENTE la clasificación proporcionada: "alto"');
+      expect(promptArg).toContain('No reinterpretes');
+      expect(promptArg).toContain('No describas un riesgo "alto" como moderado');
+    });
+
+    it('riskScore=60 con respuesta válida retorna HTTP 200 sin cambios al contrato', async () => {
+      const p = validPayload();
+      p.riskScore = 60;
+      mockCallMantle.mockResolvedValueOnce({ success: true, text: mantleSuccessText(['nulls-nombre']) } as MantleCallResult);
+      const r = await handler(makeEvent({ body: JSON.stringify(p) }));
+      expect(r.statusCode).toBe(200);
+      const b = JSON.parse(r.body);
+      expect(b.source).toBe('ai');
+      expect(b.explanations).toHaveLength(1);
+      expect(b.executiveSummary).toBeDefined();
+      expect(b.overallRiskAssessment).toBeDefined();
+    });
+  });
 });
