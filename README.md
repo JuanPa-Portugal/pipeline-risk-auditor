@@ -204,15 +204,6 @@ Cada log incluye un `requestId` que permite correlacionar el inicio y la finaliz
 
 Para más detalles, consultar [docs/aws-setup.md](docs/aws-setup.md) y [docs/checklist-demo.md](docs/checklist-demo.md).
 
-## Notas para la demo
-
-- Cargar un CSV con problemas variados para mostrar hallazgos de distintas severidades.
-- Verificar que las explicaciones muestran el badge "IA" indicando enriquecimiento exitoso.
-- Mostrar el resumen ejecutivo generado por Bedrock Mantle.
-- Si durante la demostración el servicio de IA entra en modo degradado, mostrar que la aplicación continúa funcionando.
-- Mostrar la consola de CloudWatch con logs de invocación Lambda.
-- Mostrar la consola de Amplify con el despliegue activo.
-- Exportar el reporte en Markdown para evidenciar la funcionalidad completa.
 
 ## Limitaciones actuales
 
