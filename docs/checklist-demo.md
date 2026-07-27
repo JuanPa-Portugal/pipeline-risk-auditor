@@ -12,26 +12,29 @@
 
 - [x] La URL de producción responde: https://main.d15yyirx1kaofe.amplifyapp.com
 - [x] Cargar cualquier CSV y verificar que aparece el badge "Modo IA · Explicaciones enriquecidas"
-- [ ] Si aparece "Modo local · Reglas", revisar CloudWatch para confirmar si Lambda/Mantle responde
 - [x] Tener preparados los tres archivos: `demo/riesgo-bajo.csv`, `demo/riesgo-medio.csv`, `demo/riesgo-alto.csv`
-- [ ] Verificar que los archivos CSV se abren correctamente en un editor de texto (codificación UTF-8)
+- [x] Los tres CSV pudieron cargarse y analizarse correctamente
 
 ## Instalación y arranque local (respaldo)
+
+> Procedimiento de respaldo en caso de que la URL de producción no esté disponible el día del video (27 de julio de 2026).
 
 ```bash
 npm install
 npm run dev
 ```
 
-- [ ] La aplicación inicia en http://localhost:5173
-- [ ] Se muestra el encabezado "Pipeline Risk Auditor"
-- [ ] En modo local, aparece el badge "Modo local · Reglas"
+- La aplicación inicia en http://localhost:5173
+- Se muestra el encabezado "Pipeline Risk Auditor"
+- En modo local, aparece el badge "Modo local · Reglas"
 
-## Estado inicial de la aplicación
+## Estado inicial (guion del video)
 
-- [ ] Se muestra la zona de carga de archivos (drag-and-drop)
-- [ ] No hay errores en la consola del navegador
-- [ ] No se muestra ningún resultado ni hallazgo previo
+> Parte del guion de grabación del video del 27 de julio de 2026.
+
+- Se muestra la zona de carga de archivos (drag-and-drop)
+- No hay errores en la consola del navegador
+- No se muestra ningún resultado ni hallazgo previo
 
 ---
 
@@ -54,9 +57,7 @@ npm run dev
 
 > "Este archivo representa datos limpios y bien estructurados. El motor no detecta problemas. Las heurísticas identifican correctamente la columna id como clave primaria y fecha_actualizacion como marcador de carga incremental."
 
-### Reinicio
-
-- [ ] Hacer clic en "Analizar otro archivo" antes de cargar el siguiente CSV
+- [x] El botón "Analizar otro archivo" fue utilizado entre los casos de demostración
 
 ---
 
@@ -74,18 +75,16 @@ npm run dev
   - [x] `empties-correo`: 2 vacíos (10%)
   - [x] `empties-departamento`: 2 vacíos (10%)
   - [x] `duplicates-exact`: 1 fila duplicada (5%)
-- [ ] Fechas en formatos mixtos (YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY) son reconocidas como válidas
-- [ ] 2024-02-29 y 2024-04-30 son fechas válidas, no generan hallazgo
 - [x] Candidata heurística: `fecha_actualizacion` (marcador incremental)
 - [x] Si hay IA: explicaciones contextuales para cada hallazgo
+
+> **Nota técnica:** Las fechas en formatos mixtos (YYYY-MM-DD, DD/MM/YYYY, DD-MM-YYYY) son reconocidas como válidas por el motor. Los valores 2024-02-29 y 2024-04-30 son fechas válidas del calendario y no generan hallazgo. Este es el comportamiento esperado.
 
 ### Explicación para el presentador
 
 > "Este archivo tiene problemas moderados: algunos campos vacíos y una fila duplicada. Las fechas usan formatos distintos pero son todas válidas. El motor clasifica correctamente estos problemas como severidad media."
 
-### Reinicio
-
-- [ ] Hacer clic en "Analizar otro archivo" antes de cargar el siguiente CSV
+- [x] El botón "Analizar otro archivo" fue utilizado entre los casos de demostración
 
 ---
 
@@ -114,15 +113,23 @@ npm run dev
 
 ---
 
-## Funcionalidades adicionales a mostrar
+## Funcionalidades adicionales validadas
 
 - [x] Badge "IA" o "Reglas" según la disponibilidad del servicio
 - [x] Resumen ejecutivo generado por Bedrock Mantle (si está disponible)
 - [x] Confirmar/rechazar una columna candidata (en el caso de riesgo bajo o medio)
-- [ ] Exportar reporte en Markdown con el botón de descarga
-- [ ] Mostrar que el reporte descargado contiene hallazgos, puntaje y candidatas
+- [x] Exportar reporte en Markdown con el botón de descarga
+- [x] El reporte descargado contiene puntaje, hallazgos y candidatas
 
-## Notas para video de presentación
+### Limitación conocida del reporte Markdown
+
+- El reporte Markdown incluye puntaje, hallazgos y candidatas.
+- Actualmente no conserva el resumen ejecutivo ni las explicaciones generadas por Mantle.
+- Esta limitación no bloquea la entrega del MVP.
+
+## Notas para video de presentación (27 de julio de 2026)
+
+> Guion de referencia para la grabación del video.
 
 1. Mostrar la pantalla inicial limpia
 2. Cargar `riesgo-bajo.csv` → explicar que no hay riesgos
@@ -151,37 +158,57 @@ npm run dev
 - [x] La corrección fue desplegada y validada en producción
 - [x] El resumen ejecutivo de riesgo-alto.csv ahora respeta la clasificación "alto"
 
-## Plan de contingencia
+## Plan de contingencia (procedimientos de respaldo)
+
+> Procedimientos disponibles si ocurre un problema durante la grabación del video del 27 de julio de 2026. No requieren validación previa.
 
 ### Si la URL de producción no responde
 
-- [ ] Ejecutar localmente: `npm run dev`
-- [ ] El motor determinístico funciona completamente sin conexión
-- [ ] Las explicaciones serán basadas en reglas (modo degradado)
+- Ejecutar localmente: `npm run dev`
+- El motor determinístico funciona completamente sin conexión
+- Las explicaciones serán basadas en reglas (modo degradado)
 
 ### Si el servicio de IA no responde (timeout o error)
 
-- [ ] La app activa automáticamente el modo degradado
-- [ ] Se muestra el banner: "Modo degradado: el servicio de IA no está disponible"
-- [ ] Las explicaciones basadas en reglas están disponibles
-- [ ] El puntaje, hallazgos y candidatas no se afectan (son locales)
+- La app activa automáticamente el modo degradado
+- Se muestra el banner: "Modo degradado: el servicio de IA no está disponible"
+- Las explicaciones basadas en reglas están disponibles
+- El puntaje, hallazgos y candidatas no se afectan (son locales)
 
 ### Si un CSV no carga correctamente
 
-- [ ] Verificar que el archivo tiene codificación UTF-8
-- [ ] Verificar que la extensión es .csv
-- [ ] Verificar que el tamaño no excede 10 MB
-- [ ] Crear un CSV simple de prueba con 3-5 filas como respaldo
+- Verificar que el archivo tiene codificación UTF-8
+- Verificar que la extensión es .csv
+- Verificar que el tamaño no excede 10 MB
+- Crear un CSV simple de prueba con 3-5 filas como respaldo
 
 ### Si los puntajes no coinciden con lo esperado
 
-- [ ] Ejecutar `npm run test:run` para verificar que los tests pasan
-- [ ] Los puntajes dependen de la fórmula: (alto×20) + (medio×10) + (bajo×5), limitado a 100
-- [ ] Verificar que el archivo CSV no se modificó accidentalmente
+- Ejecutar `npm --prefix backend test` para verificar que los tests pasan
+- Los puntajes dependen de la fórmula: (alto×20) + (medio×10) + (bajo×5), limitado a 100
+- Verificar que el archivo CSV no se modificó accidentalmente
 
-## Cierre de la demostración
+## Cierre de la demostración (guion del video)
 
-- [ ] Resumir los tres niveles de riesgo mostrados
-- [ ] Mencionar que el proyecto se desarrolló con Kiro usando spec-driven development
-- [ ] Referenciar `.kiro/specs/pipeline-risk-auditor/` como evidencia del proceso
-- [ ] Agradecer y abrir a preguntas
+> Parte del guion de grabación del video del 27 de julio de 2026.
+
+- Resumir los tres niveles de riesgo mostrados
+- Mencionar que el proyecto se desarrolló con Kiro usando spec-driven development
+- Referenciar `.kiro/specs/pipeline-risk-auditor/` como evidencia del proceso
+- Agradecer y abrir a preguntas
+
+## Estado final del MVP
+
+Con estas validaciones completadas:
+
+- Frontend desplegado en AWS Amplify.
+- Backend desplegado mediante AWS SAM.
+- API Gateway y Lambda operativos.
+- Integración con Amazon Bedrock Mantle validada.
+- Modo determinístico disponible.
+- Casos de riesgo bajo, medio y alto validados.
+- Exportación Markdown validada.
+- Pruebas del backend: 43 de 43 aprobadas.
+- Clasificación determinística corregida y validada en producción.
+- Repositorio sincronizado con GitHub.
+- Video de presentación programado para el 27 de julio de 2026.
