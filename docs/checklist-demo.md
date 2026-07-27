@@ -13,7 +13,7 @@
 - [x] La URL de producción responde: https://main.d15yyirx1kaofe.amplifyapp.com
 - [x] Cargar cualquier CSV y verificar que aparece el badge "Modo IA · Explicaciones enriquecidas"
 - [ ] Si aparece "Modo local · Reglas", revisar CloudWatch para confirmar si Lambda/Mantle responde
-- [ ] Tener preparados los tres archivos: `demo/riesgo-bajo.csv`, `demo/riesgo-medio.csv`, `demo/riesgo-alto.csv`
+- [x] Tener preparados los tres archivos: `demo/riesgo-bajo.csv`, `demo/riesgo-medio.csv`, `demo/riesgo-alto.csv`
 - [ ] Verificar que los archivos CSV se abren correctamente en un editor de texto (codificación UTF-8)
 
 ## Instalación y arranque local (respaldo)
@@ -39,16 +39,16 @@ npm run dev
 
 ### Cargar `demo/riesgo-bajo.csv`
 
-- [ ] Arrastrar o seleccionar el archivo
-- [ ] El análisis se ejecuta sin errores
+- [x] Arrastrar o seleccionar el archivo
+- [x] El análisis se ejecuta sin errores
 
 ### Resultado esperado
 
-- [ ] Puntaje: **0/100**
-- [ ] 0 hallazgos detectados
-- [ ] Candidatas heurísticas: `id` (clave primaria) y `fecha_actualizacion` (marcador incremental)
-- [ ] Resumen de estructura: 20 filas, 5 columnas
-- [ ] Si hay IA disponible: resumen ejecutivo indica riesgo bajo
+- [x] Puntaje: **0/100**
+- [x] 0 hallazgos detectados
+- [x] Candidatas heurísticas: `id` (clave primaria) y `fecha_actualizacion` (marcador incremental)
+- [x] Resumen de estructura: 20 filas, 5 columnas
+- [x] Si hay IA disponible: resumen ejecutivo indica riesgo bajo
 
 ### Explicación para el presentador
 
@@ -93,20 +93,20 @@ npm run dev
 
 ### Cargar `demo/riesgo-alto.csv`
 
-- [ ] Arrastrar o seleccionar el archivo
-- [ ] El análisis se ejecuta sin errores
+- [x] Arrastrar o seleccionar el archivo
+- [x] El análisis se ejecuta sin errores
 
 ### Resultado esperado
 
-- [ ] Puntaje: **60/100**
-- [ ] 3 hallazgos detectados, todos con severidad "alto":
-  - [ ] `empties-correo`: 5 vacíos (25%)
-  - [ ] `empties-departamento`: 7 vacíos (35%)
-  - [ ] `duplicates-exact`: 5 filas duplicadas (25%)
-- [ ] No se detecta columna temporal (la columna se llama "registro", no coincide con patrones temporales)
-- [ ] No se identifica clave primaria (id no es único: valor "1" repetido 6 veces)
-- [ ] Sin candidatas heurísticas
-- [ ] Si hay IA: resumen ejecutivo advierte sobre riesgo elevado
+- [x] Puntaje: **60/100**
+- [x] 3 hallazgos detectados, todos con severidad "alto":
+  - [x] `empties-correo`: 5 vacíos (25%)
+  - [x] `empties-departamento`: 7 vacíos (35%)
+  - [x] `duplicates-exact`: 5 filas duplicadas (25%)
+- [x] No se detecta columna temporal (la columna se llama "registro", no coincide con patrones temporales)
+- [x] No se identifica clave primaria (id no es único: valor "1" repetido 6 veces)
+- [x] Sin candidatas heurísticas
+- [x] Si hay IA: resumen ejecutivo advierte sobre riesgo elevado
 
 ### Explicación para el presentador
 
@@ -116,9 +116,9 @@ npm run dev
 
 ## Funcionalidades adicionales a mostrar
 
-- [ ] Badge "IA" o "Reglas" según la disponibilidad del servicio
+- [x] Badge "IA" o "Reglas" según la disponibilidad del servicio
 - [x] Resumen ejecutivo generado por Bedrock Mantle (si está disponible)
-- [ ] Confirmar/rechazar una columna candidata (en el caso de riesgo bajo o medio)
+- [x] Confirmar/rechazar una columna candidata (en el caso de riesgo bajo o medio)
 - [ ] Exportar reporte en Markdown con el botón de descarga
 - [ ] Mostrar que el reporte descargado contiene hallazgos, puntaje y candidatas
 
@@ -142,6 +142,14 @@ npm run dev
 - [x] `findingCount` igual a 3
 - [x] `explanationCount` igual a 3
 - [x] Ausencia de datos sensibles en los logs
+
+## Corrección: clasificación determinística como fuente de verdad
+
+- [x] La clasificación de riesgo (bajo, medio, alto) es calculada localmente y es la fuente de verdad
+- [x] Mantle no debe reinterpretar ni sustituir el nivel calculado por el sistema
+- [x] Se agregó regla explícita en el prompt que prohíbe reinterpretar la clasificación
+- [x] La corrección fue desplegada y validada en producción
+- [x] El resumen ejecutivo de riesgo-alto.csv ahora respeta la clasificación "alto"
 
 ## Plan de contingencia
 
